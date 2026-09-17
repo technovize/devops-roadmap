@@ -1,0 +1,23 @@
+# Exercise: rewrite this insecure deployment with full security hardening
+# (No security context, runs as root, no resource limits, no network policy)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: app
+          image: myapp:latest
+          ports:
+            - containerPort: 8000

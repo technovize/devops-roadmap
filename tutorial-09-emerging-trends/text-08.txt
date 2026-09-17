@@ -1,0 +1,8 @@
+Without a service mesh:
+Service A ------------ HTTP -------------> Service B
+          (unencrypted, no auth, no retry)
+
+With a service mesh (sidecar proxy model):
+Service A -> [Envoy Sidecar] ---- mTLS ---- [Envoy Sidecar] -> Service B
+             (encrypt, auth,                 (decrypt, verify,
+              retry, observe)                 observe)

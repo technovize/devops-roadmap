@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app-production
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io   # Cascade-delete managed resources
+
+spec:
+  project: default
+
+  # -- Source: where the desired state lives --------------------------------
+  source:
+    repoURL: https://github.com/myorg/my-app-gitops.git
+    targetRevision: main
+    path: kubernetes/production          # Path within the repo
+
+  # -- Destination: which cluster and namespace to deploy to ---------------
+  destination:
+    server: https://kubernetes.default.svc   # In-cluster
+    namespace: production
+
+  # -- Sync Policy: how and when to synchronize ----------------------------
+  syncPolicy:
+    automated:
+      prune: true          # Delete resources removed from Git
+      selfHeal: true       # Revert manual changes to cluster state
+      allowEmpty: false    # Don't prune everything if the source is empty
+
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - ApplyOutOfSyncOnly=true     # Only sync resources that are actually out of sync
+
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+  # -- Health Checks: how to determine if the app is healthy ---------------
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas    # Ignore replica count (managed by HPA, not Git)

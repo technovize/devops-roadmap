@@ -1,0 +1,19 @@
+# Error: "Container 'app' must define a CPU limit"
+
+# Check which policy is blocking
+kubectl describe deploy myapp -n production | grep -A10 "Warning"
+
+# Fix: add the required resource limits
+containers:
+  - name: app
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m    # Required by Gatekeeper policy
+        memory: 256Mi  # Required by Gatekeeper policy
+
+# If the policy is too strict for your use case:
+# Option A: Change the policy's enforcementAction to "warn" (audit only)
+# Option B: Add a constraint exception for specific namespaces

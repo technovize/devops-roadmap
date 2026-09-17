@@ -1,0 +1,9 @@
+# The repository must match your EXACT GitHub username
+# If your username is "jsmith" -> repository must be named "jsmith"
+# Check: github.com/jsmith/jsmith
+
+# If it's showing the old README:
+# GitHub CDN caches for ~10 minutes — wait and hard refresh (Ctrl+Shift+R)
+
+# Check for syntax errors in markdown:
+# Use https://dillinger.io/ to preview markdown before pushing

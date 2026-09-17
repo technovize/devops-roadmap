@@ -1,0 +1,7 @@
+Traditional Observability:
+App -> [Code instrumentation] -> Agent -> Backend
+      (requires code change, redeployment)
+
+eBPF Observability:
+App -> [kernel hook, no code change] -> eBPF Program -> Backend
+      (zero application changes, zero redeployment)

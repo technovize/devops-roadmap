@@ -1,0 +1,11 @@
+# Create the test environment and run converge + verify
+kitchen test
+
+# Just apply the cookbook (converge)
+kitchen converge
+
+# Just run the tests (verify)
+kitchen verify
+
+# Destroy the test environment
+kitchen destroy

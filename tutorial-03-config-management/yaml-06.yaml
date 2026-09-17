@@ -1,0 +1,9 @@
+# Bad: using command module for package management
+- name: Install nginx
+  command: apt-get install -y nginx   # NOT idempotent
+
+# Good: use the apt module with state: present
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present    # Idempotent — only installs if absent

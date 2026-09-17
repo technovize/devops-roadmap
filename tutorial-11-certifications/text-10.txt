@@ -1,0 +1,13 @@
+The AWS exam often presents two correct-looking answers where:
+- Option A is correct but complex
+- Option B is simpler and also correct
+
+Rule: AWS exams prefer the SIMPLEST solution that meets ALL stated requirements.
+If the question says "minimum operational overhead" -> choose the managed service
+If the question says "most cost-effective" -> eliminate services with high per-unit cost
+If the question says "least disruption" -> choose the option with no downtime
+
+Common traps:
+- "Multi-AZ" sounds good but adds cost — only use if "high availability" is stated
+- "Reserved Instances" sounds good but not if workload is unpredictable
+- "Lambda" is not always right for long-running, stateful, or high-memory workloads

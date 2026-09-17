@@ -1,0 +1,275 @@
+# -- Global Configuration -----------------------------------------------------
+
+image: python:3.12-slim
+
+variables:
+  REGISTRY:        $CI_REGISTRY                        # GitLab's built-in container registry
+  IMAGE_NAME:      $CI_REGISTRY_IMAGE
+  IMAGE_TAG:       $CI_COMMIT_SHORT_SHA
+  DOCKER_DRIVER:   overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+
+# Cache pip packages between pipeline runs
+cache:
+  key:
+    files:
+      - requirements.txt
+  paths:
+    - .pip-cache/
+
+# -- Stage Definitions --------------------------------------------------------
+
+stages:
+  - validate
+  - test
+  - build
+  - scan
+  - deploy-staging
+  - integration-test
+  - deploy-production
+  - notify
+
+# -- Templates (YAML anchors for reuse) --------------------------------------
+
+.python-base: &python-base
+  before_script:
+    - pip install --cache-dir .pip-cache -r requirements.txt -q
+
+.docker-base: &docker-base
+  image: docker:24
+  services:
+    - docker:24-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+.kubectl-base: &kubectl-base
+  image: bitnami/kubectl:latest
+  before_script:
+    - echo "$KUBECONFIG_B64" | base64 -d > /tmp/kubeconfig
+    - export KUBECONFIG=/tmp/kubeconfig
+
+
+# ==============================================================================
+# VALIDATE STAGE
+# ==============================================================================
+
+lint:python:
+  <<: *python-base
+  stage: validate
+  script:
+    - flake8 app/ --max-line-length=120 --statistics
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+lint:security:
+  <<: *python-base
+  stage: validate
+  script:
+    - bandit -r app/ -ll -f json -o bandit-report.json
+  artifacts:
+    when: always
+    paths:
+      - bandit-report.json
+    expire_in: 1 week
+
+lint:types:
+  <<: *python-base
+  stage: validate
+  script:
+    - mypy app/ --ignore-missing-imports
+
+
+# ==============================================================================
+# TEST STAGE
+# ==============================================================================
+
+test:unit:
+  <<: *python-base
+  stage: test
+  services:
+    - postgres:16-alpine
+    - redis:7-alpine
+  variables:
+    POSTGRES_DB:       test_db
+    POSTGRES_USER:     postgres
+    POSTGRES_PASSWORD: testpassword
+    DATABASE_URL:      "postgres://postgres:testpassword@postgres/test_db"
+    REDIS_URL:         "redis://redis:6379/0"
+  script:
+    - pytest tests/unit/ tests/integration/
+        --cov=app
+        --cov-report=xml:coverage.xml
+        --cov-report=term-missing
+        --cov-fail-under=80
+        --junitxml=junit.xml
+        -v
+  coverage: '/TOTAL.*\s+(\d+%)$/'   # Regex to extract coverage % for GitLab display
+  artifacts:
+    when: always
+    reports:
+      junit: junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    expire_in: 1 week
+
+
+# ==============================================================================
+# BUILD STAGE
+# ==============================================================================
+
+build:image:
+  <<: *docker-base
+  stage: build
+  script:
+    - docker build
+        --build-arg VCS_REF=$CI_COMMIT_SHORT_SHA
+        --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        --cache-from $IMAGE_NAME:latest
+        -t $IMAGE_NAME:$IMAGE_TAG
+        -t $IMAGE_NAME:latest
+        .
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+    - docker push $IMAGE_NAME:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+
+# ==============================================================================
+# SCAN STAGE
+# ==============================================================================
+
+scan:container:
+  stage: scan
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - trivy image
+        --exit-code 0                   # Don't fail — report only
+        --severity HIGH,CRITICAL
+        --format template
+        --template "@/contrib/gitlab.tpl"
+        -o gl-container-scanning-report.json
+        $IMAGE_NAME:$IMAGE_TAG
+  artifacts:
+    reports:
+      container_scanning: gl-container-scanning-report.json  # Shows in GitLab Security tab
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+scan:secrets:
+  stage: scan
+  image: zricethezav/gitleaks:latest
+  script:
+    - gitleaks detect --source . --verbose
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+
+# ==============================================================================
+# DEPLOY STAGING
+# ==============================================================================
+
+deploy:staging:
+  <<: *kubectl-base
+  stage: deploy-staging
+  environment:
+    name: staging
+    url: https://staging.myapp.com
+  script:
+    - kubectl set image deployment/my-app
+        app=$IMAGE_NAME:$IMAGE_TAG
+        -n staging
+    - kubectl rollout status deployment/my-app -n staging --timeout=300s
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+
+# ==============================================================================
+# INTEGRATION TESTS
+# ==============================================================================
+
+test:e2e:
+  <<: *python-base
+  stage: integration-test
+  script:
+    - pytest tests/e2e/
+        --base-url=https://staging.myapp.com
+        --junitxml=e2e-results.xml
+        -v
+  artifacts:
+    when: always
+    reports:
+      junit: e2e-results.xml
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+
+# ==============================================================================
+# DEPLOY PRODUCTION
+# ==============================================================================
+
+deploy:production:
+  <<: *kubectl-base
+  stage: deploy-production
+  environment:
+    name: production
+    url: https://myapp.com
+  script:
+    - kubectl set image deployment/my-app
+        app=$IMAGE_NAME:$IMAGE_TAG
+        -n production
+    - kubectl rollout status deployment/my-app -n production --timeout=300s
+    - kubectl get pods -n production -l app=my-app
+  when: manual                          # Require a human to click "Deploy"
+  allow_failure: false
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+
+# ==============================================================================
+# NOTIFY
+# ==============================================================================
+
+notify:success:
+  stage: notify
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - |
+      curl -X POST $SLACK_WEBHOOK_URL \
+        -H 'Content-type: application/json' \
+        --data "{
+          \"text\": \"(yes) *${CI_PROJECT_NAME}* deployed to production\",
+          \"attachments\": [{
+            \"color\": \"good\",
+            \"fields\": [
+              {\"title\": \"Version\", \"value\": \"${IMAGE_TAG}\", \"short\": true},
+              {\"title\": \"Author\", \"value\": \"${GITLAB_USER_NAME}\", \"short\": true}
+            ]
+          }]
+        }"
+  when: on_success
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+notify:failure:
+  stage: notify
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - |
+      curl -X POST $SLACK_WEBHOOK_URL \
+        -H 'Content-type: application/json' \
+        --data "{
+          \"text\": \"(no) *${CI_PROJECT_NAME}* pipeline FAILED — <${CI_PIPELINE_URL}|View pipeline>\"
+        }"
+  when: on_failure
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"

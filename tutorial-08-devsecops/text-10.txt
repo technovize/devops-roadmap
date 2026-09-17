@@ -1,0 +1,11 @@
+# Error: "Found verified secret: AWS Secret Key"
+# But this is a fake test value in your test fixtures
+
+# Option 1: Add allowlist in .gitleaks.toml
+[allowlist]
+  description = "Test fixtures"
+  regexes = ['''EXAMPLE''']
+  paths = ['''(^|/)tests/''']
+
+# Option 2: Add inline allow comment
+AWS_SECRET_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"  # gitleaks:allow

@@ -1,0 +1,3 @@
+# playbook.yml — write this from the requirements above
+# Then verify with: ansible-playbook -i inventory.ini playbook.yml --check
+# Then apply with:  ansible-playbook -i inventory.ini playbook.yml

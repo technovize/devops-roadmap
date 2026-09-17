@@ -1,0 +1,21 @@
+# Quick lab environments for Kubernetes study
+# kind — fast, lightweight, great for daily practice
+kind create cluster --config - <<EOF
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+  - role: worker
+  - role: worker
+EOF
+
+# Practice a specific CKA scenario: fix a broken cluster component
+# Break it intentionally:
+sudo systemctl stop kubelet
+# Now diagnose and fix it:
+journalctl -u kubelet -n 50
+sudo systemctl start kubelet
+kubectl get nodes
+
+# minikube — good for CKAD application scenarios
+minikube start --nodes=2 --kubernetes-version=v1.29.0

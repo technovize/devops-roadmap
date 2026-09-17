@@ -1,0 +1,24 @@
+                    PRODUCT TEAMS
+          +------------------------------+
+          |  Team A  |  Team B  | Team C |
+          |  (uses   |  (uses   | (uses  |
+          |   IDP)   |   IDP)   |  IDP)  |
+          +----------+----------+--------+
+                           |
+                           | Self-service
+                           v
+          +------------------------------+
+          |    INTERNAL DEVELOPER        |
+          |         PLATFORM             |
+          |                              |
+          |  Deploy  |  Observe | Secure |
+          |  Service |  Service | Gates  |
+          |  Catalog |  Catalog |        |
+          +----------+----------+--------+
+                           |
+                           | Managed by Platform Team
+                           v
+          +------------------------------+
+          |    INFRASTRUCTURE LAYER      |
+          |  Kubernetes | Cloud | CI/CD  |
+          +------------------------------+

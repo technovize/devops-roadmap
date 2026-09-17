@@ -1,0 +1,24 @@
+# Rate (requests per second)
+sum(rate(http_requests_total{job="flask-app"}[5m]))
+
+# Error rate (percentage)
+100 * (
+  sum(rate(http_requests_total{job="flask-app", status=~"5.."}[5m]))
+  /
+  sum(rate(http_requests_total{job="flask-app"}[5m]))
+)
+
+# p50 latency
+histogram_quantile(0.50,
+  sum by (le) (rate(http_request_duration_seconds_bucket{job="flask-app"}[5m]))
+)
+
+# p95 latency
+histogram_quantile(0.95,
+  sum by (le) (rate(http_request_duration_seconds_bucket{job="flask-app"}[5m]))
+)
+
+# p99 latency
+histogram_quantile(0.99,
+  sum by (le) (rate(http_request_duration_seconds_bucket{job="flask-app"}[5m]))
+)

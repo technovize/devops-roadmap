@@ -1,0 +1,84 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: python-django-service
+  title: Python Django Microservice
+  description: >
+    Creates a new production-ready Django microservice with
+    Docker, CI/CD, monitoring, and security pre-configured.
+  tags: [python, django, recommended]
+
+spec:
+  owner: platform-team
+  type: service
+
+  parameters:
+    - title: Service Information
+      required: [name, description, owner]
+      properties:
+        name:
+          title: Service Name
+          type: string
+          pattern: '^[a-z][a-z0-9-]*[a-z0-9]$'
+          description: Lowercase, hyphens only (e.g., payment-service)
+        description:
+          title: Description
+          type: string
+        owner:
+          title: Owner Team
+          type: string
+          ui:field: OwnerPicker
+        pythonVersion:
+          title: Python Version
+          type: string
+          default: "3.12"
+          enum: ["3.11", "3.12"]
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          pythonVersion: ${{ parameters.pythonVersion }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: [github.com]
+        description: ${{ parameters.description }}
+        repoUrl: github.com?repo=${{ parameters.name }}&owner=myorg
+        defaultBranch: main
+        repoVisibility: private
+        topics: [python, django, microservice]
+        branchProtection: true
+        requiredStatusChecks: [ci/test, ci/security]
+
+    - id: register
+      name: Register in Backstage Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+    - id: create-argocd-app
+      name: Create ArgoCD Application
+      action: argocd:create-resources
+      input:
+        appName: ${{ parameters.name }}-staging
+        argoInstance: production-argocd
+        namespace: argocd
+        repoUrl: ${{ steps.publish.output.remoteUrl }}
+        path: kubernetes/staging
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in Catalog
+        url: ${{ steps.register.output.catalogInfoUrl }}

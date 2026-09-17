@@ -1,0 +1,74 @@
+---
+- name: Deploy Nginx Web Server
+  hosts: webservers
+  become: true
+  vars:
+    nginx_port: 80
+    web_root: /var/www/html
+    site_title: "My DevOps Portfolio"
+
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Create web root directory
+      file:
+        path: "{{ web_root }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: "0755"
+
+    - name: Deploy index.html
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <body><h1>{{ site_title }}</h1>
+          <p>Deployed by Ansible on {{ ansible_date_time.date }}</p>
+          </body></html>
+        dest: "{{ web_root }}/index.html"
+        owner: www-data
+        mode: "0644"
+
+    - name: Deploy Nginx configuration
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/default
+        owner: root
+        mode: "0644"
+        validate: nginx -t -c %s
+      notify: Restart Nginx
+
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/default
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+
+    - name: Start and enable Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Verify site is reachable
+      uri:
+        url: "http://localhost:{{ nginx_port }}/"
+        status_code: 200
+      register: result
+      retries: 3
+      delay: 5
+
+    - name: Print verification result
+      debug:
+        msg: "Site is UP — status {{ result.status }}"
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted

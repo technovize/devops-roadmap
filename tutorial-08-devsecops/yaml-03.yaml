@@ -1,0 +1,47 @@
+# ConstraintTemplate: define the policy schema and Rego logic
+---
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: requireresourcelimits
+spec:
+  crd:
+    spec:
+      names:
+        kind: RequireResourceLimits
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package requireresourcelimits
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          not container.resources.limits.cpu
+          msg := sprintf(
+            "Container '%v' must define a CPU limit. Add resources.limits.cpu.",
+            [container.name]
+          )
+        }
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          not container.resources.limits.memory
+          msg := sprintf(
+            "Container '%v' must define a memory limit. Add resources.limits.memory.",
+            [container.name]
+          )
+        }
+
+# Constraint: apply the template to specific namespaces
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: RequireResourceLimits
+metadata:
+  name: must-have-resource-limits
+spec:
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment", "StatefulSet", "DaemonSet"]
+    namespaces: ["production", "staging"]
+  enforcementAction: deny     # deny | warn | dryrun

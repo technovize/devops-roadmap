@@ -1,0 +1,4 @@
+feat: add health check script for all production services
+fix: handle timeout errors in backup script
+chore: pin boto3 to 1.34.0 for stability
+ci: add pre-commit linting to GitHub Actions workflow

@@ -1,0 +1,30 @@
+# Deny all traffic by default
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-all
+  namespace: production
+spec: {}   # Empty spec = deny all
+
+# Allow payment-service to only receive traffic from checkout-service
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: payment-service-authz
+  namespace: production
+spec:
+  selector:
+    matchLabels:
+      app: payment-service
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/production/sa/checkout-service"
+      to:
+        - operation:
+            methods: ["POST"]
+            paths: ["/api/v2/payments/*"]

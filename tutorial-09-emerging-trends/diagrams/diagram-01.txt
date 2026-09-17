@@ -1,0 +1,26 @@
+gitops-config/
++-- argocd/
+|   +-- root-app.yaml              # The App of Apps root
+|   +-- apps/
+|       +-- my-app-staging.yaml    # ArgoCD Application for staging
+|       +-- my-app-production.yaml # ArgoCD Application for production
+|       +-- monitoring.yaml        # Prometheus + Grafana stack
+|       +-- ingress-nginx.yaml     # Ingress controller
+|
++-- kubernetes/
+|   +-- staging/
+|   |   +-- deployment.yaml
+|   |   +-- service.yaml
+|   |   +-- configmap.yaml
+|   |   +-- hpa.yaml
+|   +-- production/
+|       +-- deployment.yaml
+|       +-- service.yaml
+|       +-- configmap.yaml
+|       +-- hpa.yaml
+|
++-- helm-releases/
+    +-- staging/
+    |   +-- my-app-values.yaml     # Helm values for staging
+    +-- production/
+        +-- my-app-values.yaml     # Helm values for production

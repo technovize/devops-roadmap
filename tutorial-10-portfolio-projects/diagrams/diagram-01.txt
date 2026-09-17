@@ -1,0 +1,32 @@
+project-name/
++-- README.md                   # Project overview, architecture, setup guide
++-- ARCHITECTURE.md             # Detailed architecture decisions (ADRs)
++-- RUNBOOK.md                  # Operational runbook — how to respond to incidents
++-- CHANGELOG.md                # Version history
+|
++-- .github/
+|   +-- workflows/              # CI/CD pipeline definitions
+|   +-- PULL_REQUEST_TEMPLATE.md
+|
++-- terraform/                  # Infrastructure as Code
+|   +-- modules/                # Reusable Terraform modules
+|   +-- environments/
+|   |   +-- staging/
+|   |   +-- production/
+|   +-- README.md
+|
++-- kubernetes/                 # Kubernetes manifests
+|   +-- base/                   # Kustomize base
+|   +-- overlays/
+|       +-- staging/
+|       +-- production/
+|
++-- docker/                     # Dockerfiles
++-- monitoring/                 # Prometheus rules, Grafana dashboards
++-- scripts/                    # Utility scripts
++-- docs/                       # Architecture diagrams, decision records
+    +-- adr/                    # Architecture Decision Records
+    |   +-- 001-use-terraform.md
+    |   +-- 002-eks-vs-ecs.md
+    |   +-- 003-loki-vs-elasticsearch.md
+    +-- diagrams/               # PNG/SVG architecture diagrams

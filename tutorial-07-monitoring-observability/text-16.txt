@@ -1,0 +1,13 @@
+1. Check data source is configured:
+   Grafana -> Configuration -> Data Sources -> Prometheus -> Test
+
+2. Verify the Prometheus URL is correct:
+   - If Prometheus runs in Docker: http://prometheus:9090
+   - If Prometheus runs on host: http://host.docker.internal:9090
+
+3. Check time range in Grafana:
+   - Set to "Last 15 minutes" and ensure there IS data in that window
+   - Query Prometheus directly to verify: http://localhost:9090/graph
+
+4. Check the panel's data source:
+   - Edit panel -> Data source dropdown -> Select the correct Prometheus instance

@@ -1,0 +1,38 @@
+# Create a vault password file (never commit this)
+echo "my-vault-password" > .vault_pass
+echo ".vault_pass" >> .gitignore
+
+# Encrypt a sensitive variable file
+cat > secrets.yml << 'EOF'
+db_password: "supersecret123"
+api_key: "sk_live_abc123"
+EOF
+
+ansible-vault encrypt secrets.yml --vault-password-file .vault_pass
+
+# View the encrypted file
+cat secrets.yml
+# Output: $ANSIBLE_VAULT;1.1;AES256;...
+
+# Use in a playbook
+cat > deploy_with_secrets.yml << 'EOF'
+---
+- name: Deploy with secrets
+  hosts: webservers
+  become: true
+  vars_files:
+    - secrets.yml
+  tasks:
+    - name: Create database config
+      template:
+        src: db.conf.j2
+        dest: /etc/myapp/db.conf
+        mode: "0600"
+EOF
+
+# Run with vault password
+ansible-playbook -i inventory.ini deploy_with_secrets.yml \
+  --vault-password-file .vault_pass
+
+# Edit encrypted file
+ansible-vault edit secrets.yml --vault-password-file .vault_pass

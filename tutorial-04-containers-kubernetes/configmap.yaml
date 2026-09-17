@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-app-config
+  namespace: production
+data:
+  db_host: "db.production.internal"
+  db_port: "5432"
+  redis_url: "redis://redis.production.internal:6379/0"
+  log_level: "warning"
+  allowed_hosts: "api.myapp.com,www.myapp.com"

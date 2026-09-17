@@ -1,0 +1,1 @@
+Application Pods -> Fluent Bit (collector) -> Elasticsearch -> Kibana (query & visualize)

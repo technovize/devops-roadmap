@@ -1,0 +1,52 @@
+prometheus:
+  prometheusSpec:
+    retention: 30d               # Keep 30 days of metrics
+    retentionSize: "50GB"
+
+    # Automatically discover ServiceMonitor resources across all namespaces
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorNamespaceSelector: {}
+    serviceMonitorSelector: {}
+
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: 2000m
+        memory: 8Gi
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes: [ReadWriteOnce]
+          resources:
+            requests:
+              storage: 100Gi
+
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes: [ReadWriteOnce]
+          resources:
+            requests:
+              storage: 10Gi
+
+grafana:
+  enabled: true
+  adminPassword: ${GRAFANA_ADMIN_PASSWORD}
+
+  persistence:
+    enabled: true
+    size: 10Gi
+
+  ingress:
+    enabled: true
+    hosts: [grafana.myapp.com]
+    tls:
+      - secretName: grafana-tls
+        hosts: [grafana.myapp.com]

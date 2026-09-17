@@ -1,0 +1,12 @@
+my-ansible-project/
++-- inventory/
+|   +-- hosts.ini
++-- playbooks/
+|   +-- setup_server.yml
++-- roles/
+|   +-- common/
+|       +-- tasks/
+|       |   +-- main.yml
+|       +-- handlers/
+|           +-- main.yml
++-- ansible.cfg

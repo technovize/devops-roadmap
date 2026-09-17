@@ -1,0 +1,17 @@
+# Environment files with secrets
+.env
+.env.local
+.env.production
+
+# AWS credentials
+.aws/
+
+# SSH private keys
+*.pem
+*.key
+id_rsa
+
+# Terraform state (may contain secrets)
+*.tfstate
+*.tfstate.backup
+.terraform/

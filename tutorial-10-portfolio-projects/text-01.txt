@@ -1,0 +1,26 @@
+<!-- README.md at the root of your GitHub profile (github.com/yourusername) -->
+
+# KC Ramo — DevOps Engineer
+
+Cloud infrastructure, container orchestration, and CI/CD automation.
+Building reliable systems that ship software safely and fast.
+
+## :hammer_and_wrench: Core Skills
+Terraform · Kubernetes · Docker · GitHub Actions · Python · Ansible
+Prometheus · Grafana · ArgoCD · AWS · PostgreSQL · Django
+
+## :rocket: Portfolio Projects
+
+| Project | Description | Stack | Live |
+|---------|-------------|-------|------|
+| [Cloud Infra Platform](github.com/kcramo/cloud-infra-platform) | Production AWS infrastructure with EKS, RDS, ALB | Terraform, AWS, EKS | [Dashboard](https://grafana.myproject.com) |
+| [DevOps Pipeline Template](github.com/kcramo/devops-pipeline-template) | Reusable CI/CD with full security gates | GitHub Actions, Docker, Trivy | [![CI](badge)] |
+| [Observability Stack](github.com/kcramo/observability-stack) | Full metrics/logs/traces on Kubernetes | Prometheus, Grafana, Loki, Tempo | [Live](https://grafana.myproject.com) |
+| [Django GitOps App](github.com/kcramo/django-gitops-app) | Production Django app deployed via GitOps | Django, ArgoCD, Postgres, Redis | [App](https://app.myproject.com) |
+
+## :scroll: Certifications
+- AWS Certified DevOps Engineer – Professional (2026)
+- Certified Kubernetes Administrator (CKA) (2025)
+
+## :memo: Writing
+[Technovize Publishing](https://technovize.com) — DevOps tutorials and guides

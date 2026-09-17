@@ -1,0 +1,44 @@
+{
+  "title": "SLO Dashboard",
+  "panels": [
+    {
+      "title": "Availability SLO — Target: 99.9%",
+      "type": "stat",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              {"value": 0,     "color": "red"},
+              {"value": 99.0,  "color": "yellow"},
+              {"value": 99.9,  "color": "green"}
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "targets": [{
+        "expr": "100 * sum(rate(http_requests_total{status!~'5..'}[30d])) / sum(rate(http_requests_total[30d]))"
+      }]
+    },
+    {
+      "title": "Error Budget Remaining",
+      "type": "gauge",
+      "fieldConfig": {
+        "defaults": {
+          "min": 0, "max": 100,
+          "thresholds": {
+            "steps": [
+              {"value": 0,  "color": "red"},
+              {"value": 25, "color": "yellow"},
+              {"value": 50, "color": "green"}
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "targets": [{
+        "expr": "100 * (1 - (sum(rate(http_requests_total{status=~'5..'}[30d])) / sum(rate(http_requests_total[30d]))) / 0.001)"
+      }]
+    }
+  ]
+}

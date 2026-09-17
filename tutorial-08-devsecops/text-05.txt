@@ -1,0 +1,11 @@
+# Install cosign
+brew install cosign
+
+# Generate a key pair
+cosign generate-key-pair
+
+# Sign an image after building (in CI/CD)
+cosign sign --key cosign.key ghcr.io/myorg/my-app:sha-abc123
+
+# Verify an image before deploying
+cosign verify --key cosign.pub ghcr.io/myorg/my-app:sha-abc123

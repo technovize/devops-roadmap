@@ -1,0 +1,6 @@
+Physical Hardware
++-- Host OS Kernel (Linux)
+    +-- Container Runtime (Docker / containerd)
+        +-- Container 1: App A + Libraries  (~50–500 MB, starts in seconds)
+        +-- Container 2: App B + Libraries  (~50–500 MB, starts in seconds)
+        +-- Container 3: App C + Libraries  (~50–500 MB, starts in seconds)

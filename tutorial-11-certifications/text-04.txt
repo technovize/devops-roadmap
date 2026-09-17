@@ -1,0 +1,11 @@
+Month 1–3:   AWS Cloud Practitioner (CLF-C02)
+             [Optional — skip if you have any cloud exposure]
+             v
+Month 3–7:   AWS Solutions Architect – Associate (SAA-C03)
+             [The most market-recognized AWS cert]
+             v
+Month 7–10:  HashiCorp Terraform Associate (003)
+             [Affordable, directly validates IaC skills from Tutorial 6]
+             v
+Month 10–14: Certified Kubernetes Administrator (CKA)
+             [The hands-on cert that proves real Kubernetes skill]

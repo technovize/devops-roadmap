@@ -1,0 +1,14 @@
+roles/
++-- nginx/
+    +-- tasks/
+    |   +-- main.yml       # The main task list
+    +-- handlers/
+    |   +-- main.yml       # Handlers (e.g., restart nginx)
+    +-- templates/
+    |   +-- nginx.conf.j2  # Jinja2 configuration templates
+    +-- files/
+    |   +-- index.html     # Static files to copy to managed nodes
+    +-- vars/
+    |   +-- main.yml       # Role-specific variables
+    +-- defaults/
+        +-- main.yml       # Default values (overridable by callers)

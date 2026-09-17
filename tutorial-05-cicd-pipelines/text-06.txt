@@ -1,0 +1,15 @@
+# GitHub Actions pip cache
+- uses: actions/setup-python@v5
+  with:
+    python-version: "3.12"
+    cache: pip              # Built-in pip caching
+
+# Docker BuildKit cache
+- uses: docker/build-push-action@v5
+  with:
+    cache-from: type=gha
+    cache-to: type=gha,mode=max  # mode=max caches all layers including intermediate
+
+# Check if cache is being hit in the Actions logs:
+# "importing cache manifest" = cache hit
+# "exporting cache" = cache miss (building cache for next run)

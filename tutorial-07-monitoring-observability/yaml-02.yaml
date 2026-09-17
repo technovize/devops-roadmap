@@ -1,0 +1,20 @@
+# Grafana data sources (add to prometheus-values.yaml)
+grafana:
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki.monitoring.svc.cluster.local:3100
+      jsonData:
+        derivedFields:
+          - name: TraceID
+            matcherRegex: '"trace_id":"(\w+)"'
+            url: "$${__value.raw}"
+            datasourceUid: tempo     # Clicking a trace ID opens Tempo
+
+    - name: Tempo
+      type: tempo
+      url: http://tempo.monitoring.svc.cluster.local:3100
+      jsonData:
+        tracesToLogs:
+          datasourceUid: loki       # Clicking a span opens related logs
+          tags: [namespace, pod]

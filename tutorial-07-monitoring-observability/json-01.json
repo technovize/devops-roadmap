@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-05-06T14:23:01.452Z",
+  "level": "ERROR",
+  "service": "payment-service",
+  "trace_id": "4bf92f3577b34da6",
+  "message": "Payment processing failed",
+  "user_id": "usr_8827fba",
+  "amount": 149.99,
+  "error": "stripe_api_timeout",
+  "duration_ms": 5003
+}

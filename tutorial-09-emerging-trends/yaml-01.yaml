@@ -1,0 +1,19 @@
+# argocd/root-app.yaml — the root application that manages all other apps
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/myorg/gitops-config.git
+    targetRevision: main
+    path: argocd/apps          # This directory contains all child Application manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

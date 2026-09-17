@@ -1,0 +1,5 @@
+# A daily study rhythm that works:
+# 30 min: Watch course video or read documentation section
+# 90 min: Build the concept in a real lab environment
+# 30 min: Do 10–15 practice exam questions on today's topic
+# Total: 2.5 hours/day, 5 days/week

@@ -1,0 +1,4 @@
+Developer opens PR -> Review & Merge to Git -> GitOps Operator detects change
+         ^                                              |
+         |                                              v
+    Drift alert <--- Operator detects drift <--- Operator applies desired state

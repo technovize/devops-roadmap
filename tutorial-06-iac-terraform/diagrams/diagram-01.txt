@@ -1,0 +1,6 @@
+modules/
++-- vpc/
+    +-- main.tf       # Resources
+    +-- variables.tf  # Input variables
+    +-- outputs.tf    # Outputs
+    +-- README.md     # Documentation

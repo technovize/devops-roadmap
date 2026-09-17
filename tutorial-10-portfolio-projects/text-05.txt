@@ -1,0 +1,7 @@
+Title: "How I deployed a Django app to EKS with GitOps and canary releases"
+
+1. What I was trying to build (1 paragraph)
+2. The architecture I chose and why (with diagram)
+3. The hardest problem I hit and how I solved it (the valuable part)
+4. The result — what it can do, what it costs
+5. Link to the GitHub repository

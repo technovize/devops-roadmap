@@ -1,0 +1,27 @@
+# -- Availability SLO Tracking -------------------------------------------------
+
+# SLO: 99.9% of requests succeed over 30 days
+# Error budget = 0.1% of total requests
+
+# Current error rate (over 30-day window)
+1 - (
+  sum(increase(http_requests_total{status_code!~"5.."}[30d]))
+  /
+  sum(increase(http_requests_total[30d]))
+)
+
+# Error budget remaining (how much of our 0.1% budget is left?)
+(
+  (1 - 0.999)    # Total error budget (0.1%)
+  -
+  (              # Errors consumed so far
+    1 - (
+      sum(increase(http_requests_total{status_code!~"5.."}[30d]))
+      /
+      sum(increase(http_requests_total[30d]))
+    )
+  )
+)
+/
+(1 - 0.999)      # Divide by total budget to get percentage remaining
+* 100

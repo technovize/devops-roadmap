@@ -1,0 +1,14 @@
+# HELP http_requests_total Total number of HTTP requests
+# TYPE http_requests_total counter
+http_requests_total{endpoint="/api/users",method="GET",status_code="200"} 14823.0
+http_requests_total{endpoint="/api/users",method="POST",status_code="201"} 382.0
+http_requests_total{endpoint="/api/orders",method="GET",status_code="200"} 9271.0
+http_requests_total{endpoint="/api/orders",method="POST",status_code="500"} 47.0
+
+# HELP http_request_duration_seconds HTTP request duration in seconds
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{endpoint="/api/users",method="GET",le="0.1"} 14201.0
+http_request_duration_seconds_bucket{endpoint="/api/users",method="GET",le="0.5"} 14789.0
+http_request_duration_seconds_bucket{endpoint="/api/users",method="GET",le="+Inf"} 14823.0
+http_request_duration_seconds_sum{endpoint="/api/users",method="GET"} 892.341
+http_request_duration_seconds_count{endpoint="/api/users",method="GET"} 14823.0

@@ -1,0 +1,12 @@
+# Gitleaks — scan current repo for secrets in Git history
+gitleaks detect --source . --verbose --report-path gitleaks-report.json
+
+# Scan a specific commit range
+gitleaks detect --source . --log-opts="HEAD~50..HEAD"
+
+# Scan before commit (as a pre-commit hook)
+gitleaks protect --staged
+
+# TruffleHog — deep scan with entropy analysis
+trufflehog git file://. --only-verified
+trufflehog github --repo https://github.com/myorg/myapp

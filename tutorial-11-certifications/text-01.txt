@@ -1,0 +1,12 @@
+BEGINNER
++-- Kubernetes and Cloud Native Associate (KCNA)
+        | (knowledge-based, good stepping stone)
+        v
+PRACTITIONER
++-- Certified Kubernetes Application Developer (CKAD)  <- app-focused
++-- Certified Kubernetes Administrator (CKA)           <- ops-focused (do this first)
+        |
+        v
+ADVANCED
++-- Certified Kubernetes Security Specialist (CKS)
+        | (requires active CKA to attempt)

@@ -1,0 +1,26 @@
+Exercise: Record yourself (voice or video) answering these questions.
+Then review and critique your answers.
+
+Questions to practice:
+
+1. "Walk me through one of your DevOps projects from start to finish."
+   Target: 3-4 minutes. Cover: problem, solution, tools chosen, outcome.
+
+2. "What's the most important engineering decision you made in that project?"
+   Target: 2 minutes. Must include WHY, not just WHAT.
+
+3. "What would you do differently if you built it again?"
+   Target: 90 seconds. Shows growth mindset and critical thinking.
+
+4. "How do you handle a production outage at 3am?"
+   Target: 2 minutes. Walk through your incident response process.
+
+5. "Explain Kubernetes to someone who has never heard of it."
+   Target: 90 seconds. No jargon. Use an analogy.
+
+Self-evaluation criteria:
+(yes) Did you mention specific tools by name?
+(yes) Did you explain WHY you chose those tools?
+(yes) Did you mention what could go wrong and how you'd handle it?
+(yes) Could a non-technical person understand the value?
+(yes) Did you stay under the target time?

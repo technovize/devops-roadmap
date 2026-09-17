@@ -1,0 +1,13 @@
+# In your GitHub Actions workflow, add after deployment:
+      - name: Run smoke tests
+        id: smoke
+        run: bash scripts/smoke_test.sh https://staging.myapp.com
+        continue-on-error: true
+
+      - name: Rollback on smoke test failure
+        if: steps.smoke.outcome == 'failure'
+        run: |
+          echo "Smoke tests failed — rolling back"
+          kubectl rollout undo deployment/myapp -n staging
+          kubectl rollout status deployment/myapp -n staging
+          exit 1

@@ -1,0 +1,96 @@
+# Start a local cluster
+kind create cluster --name devops-lab
+
+# Verify
+kubectl get nodes
+
+# Load your local image into kind (avoids needing a registry)
+kind load docker-image django-app:local --name devops-lab
+
+# Create the namespace
+kubectl create namespace app
+
+# Create the Deployment
+kubectl apply -f - << 'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+  namespace: app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: django-app
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      containers:
+        - name: app
+          image: django-app:local
+          imagePullPolicy: Never    # Use local image in kind
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DEBUG
+              value: "True"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+EOF
+
+# Create the Service
+kubectl apply -f - << 'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-app
+  namespace: app
+spec:
+  selector:
+    app: django-app
+  ports:
+    - port: 80
+      targetPort: 8000
+  type: ClusterIP
+EOF
+
+# Verify
+kubectl get pods -n app
+kubectl get svc -n app
+
+# Test connectivity
+kubectl port-forward svc/django-app 8080:80 -n app &
+curl http://localhost:8080/health
+
+# Scale up
+kubectl scale deployment django-app --replicas=4 -n app
+kubectl get pods -n app -w
+
+# Roll out a new version
+kubectl set image deployment/django-app app=django-app:v2 -n app
+kubectl rollout status deployment/django-app -n app
+
+# Roll back
+kubectl rollout undo deployment/django-app -n app
+
+# Clean up
+kind delete cluster --name devops-lab

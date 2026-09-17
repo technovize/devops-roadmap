@@ -1,0 +1,21 @@
+Budget-conscious certification strategy:
+
+Month 1-3: Study for SAA-C03 ($150)
+           Free resources: AWS free tier labs, Adrian Cantrill YouTube
+           Use AWS free tier for all hands-on practice
+
+Month 4-6: Study for Terraform Associate ($70.50)
+           Free resources: HashiCorp official tutorials (developer.hashicorp.com)
+           Use AWS free tier for Terraform labs
+
+Month 7-9: Study for CKA ($395 — includes free retake)
+           Free resources: killer.sh (included), KillerCoda (free)
+           Use kind/minikube locally (no cloud cost)
+
+Total investment: ~$616 over 9 months
+ROI: Each certification typically increases interview success rate and salary range
+
+Discount tips:
+- AWS offers 50% vouchers for non-profits and training programs
+- Check Coursera/A Cloud Guru for included vouchers with subscriptions
+- Linux Foundation runs 40% sales multiple times per year (check lfx.linuxfoundation.org)

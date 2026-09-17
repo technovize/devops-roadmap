@@ -1,0 +1,8 @@
+PREREQUISITE (one of):
++-- AZ-104: Microsoft Azure Administrator  <- recommended for DevOps path
++-- AZ-204: Developing Solutions for Microsoft Azure
+
+        |
+        v
+AZ-400: Designing and Implementing Microsoft DevOps Solutions
+        (The Azure DevOps Engineer Expert credential)

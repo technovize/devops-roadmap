@@ -1,0 +1,14 @@
+Before exam day (do this 48 hours before):
+1. Run the system compatibility check: https://syscheck.bridge.psiexams.com/
+2. Test your webcam in the exam browser
+3. Check your internet speed: speedtest.net (need at least 2 Mbps upload)
+4. Prepare your government ID
+5. Clear your desk completely (proctors WILL ask to see it)
+
+Day of exam:
+- Start system check 30 minutes early
+- Close ALL other applications (proctors can see your screen)
+- Use ethernet cable if available (more reliable than WiFi)
+- Have a backup phone as a hotspot in case internet drops
+- If connection drops during exam: close and reopen the browser
+  The exam saves progress — you won't lose completed tasks

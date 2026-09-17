@@ -1,0 +1,7 @@
+User Request -> API Gateway (12ms)
+                  +--> Auth Service (8ms)
+                  +--> Product Service (145ms)  <- slow!
+                           +--> Cache (2ms) [MISS]
+                           +--> Database (138ms)  <- the real problem
+                  +--> Recommendation Engine (22ms)
+Total: 187ms

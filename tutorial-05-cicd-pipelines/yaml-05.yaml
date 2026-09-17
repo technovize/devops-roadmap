@@ -1,0 +1,6 @@
+# GitHub Actions — Authenticate to AWS with OIDC (no stored keys)
+- name: Configure AWS credentials via OIDC
+  uses: aws-actions/configure-aws-credentials@v4
+  with:
+    role-to-assume: arn:aws:iam::123456789:role/GitHubActionsRole
+    aws-region: us-east-1

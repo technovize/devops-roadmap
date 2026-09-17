@@ -1,0 +1,32 @@
+# Exercise: Write ADRs for these decisions in your portfolio projects
+
+## ADR-001: Why Docker over Virtual Machines
+
+### Status: Accepted
+
+### Context
+[Write 2-3 sentences describing the problem you were solving]
+
+### Decision
+[State what you decided]
+
+### Rationale
+[List 3-4 reasons — be specific, not generic]
+
+### Consequences
+[What becomes easier? What becomes harder?]
+
+### Alternatives Rejected
+[What did you consider and why did you reject it?]
+
+---
+
+## ADR-002: Why Terraform over AWS CDK
+
+[Fill in using the same template]
+
+---
+
+## ADR-003: Why Prometheus+Grafana over Datadog
+
+[Fill in using the same template]

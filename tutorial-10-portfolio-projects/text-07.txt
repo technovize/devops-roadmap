@@ -1,0 +1,34 @@
+# ADR-001: Docker Containers over Virtual Machines
+
+## Status: Accepted — 2026-05-06
+
+## Context
+The Django application needed a consistent deployment environment that:
+- Eliminated "works on my machine" problems
+- Could be deployed identically to staging and production
+- Supported horizontal scaling without per-instance OS management overhead
+
+## Decision
+Package the application and all dependencies in a Docker container using
+a multi-stage Dockerfile with a python:3.12-slim base image.
+
+## Rationale
+1. **Consistency** — The container runs identically on a developer's MacBook,
+   GitHub Actions, and AWS EKS — eliminating environment parity issues.
+2. **Startup time** — Containers start in seconds vs. 1–3 minutes for VMs,
+   enabling rapid scaling and faster CI/CD pipeline execution.
+3. **Resource efficiency** — A single EC2 node can run 10–20 application
+   containers vs. 2–3 VMs, reducing infrastructure cost.
+4. **Kubernetes compatibility** — EKS orchestrates containers natively;
+   VMs would require additional tooling to achieve equivalent orchestration.
+
+## Consequences
+- Developers must install Docker Desktop locally (previously just Python)
+- Application cannot use OS-level customizations (kernel parameters, special drivers)
+- Mitigated by: security scanning in CI/CD pipeline, base image pinning
+
+## Alternatives Rejected
+- **AWS EC2 with AMI** — AMI baking is slower than Docker builds (5–10 min vs 30s)
+  and produces OS-specific artifacts that cannot run locally without a VM
+- **AWS Lambda** — Django's synchronous WSGI model and long-running connections
+  are poorly suited to Lambda's execution model and timeout constraints

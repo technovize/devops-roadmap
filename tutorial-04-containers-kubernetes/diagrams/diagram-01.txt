@@ -1,0 +1,5 @@
+Physical Hardware
++-- Hypervisor (VMware / KVM / Hyper-V)
+    +-- VM 1: Guest OS + App A  (~10–20 GB, boots in minutes)
+    +-- VM 2: Guest OS + App B  (~10–20 GB, boots in minutes)
+    +-- VM 3: Guest OS + App C  (~10–20 GB, boots in minutes)

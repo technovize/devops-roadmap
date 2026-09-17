@@ -1,0 +1,3 @@
+# Override for production
+override['myapp']['log_level'] = 'warning'
+override['myapp']['db_host']   = 'db-prod.myapp.internal'

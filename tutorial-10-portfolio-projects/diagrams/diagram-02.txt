@@ -1,0 +1,46 @@
+django-gitops-app/
++-- app/
+|   +-- config/
+|   |   +-- settings/
+|   |   |   +-- base.py
+|   |   |   +-- development.py
+|   |   |   +-- production.py
+|   |   +-- urls.py
+|   |   +-- wsgi.py
+|   +-- api/
+|   |   +-- views.py
+|   |   +-- serializers.py
+|   |   +-- urls.py
+|   +-- tasks/              # Celery tasks
+|   +-- health/             # Health check endpoint
+|
++-- Dockerfile
++-- docker-compose.yml      # Local development
++-- requirements.txt
++-- requirements-dev.txt
+|
++-- kubernetes/             # Kubernetes manifests (GitOps source)
+|   +-- base/
+|   |   +-- kustomization.yaml
+|   |   +-- deployment.yaml
+|   |   +-- service.yaml
+|   |   +-- configmap.yaml
+|   |   +-- hpa.yaml
+|   |   +-- network-policy.yaml
+|   |   +-- service-monitor.yaml
+|   +-- overlays/
+|       +-- staging/
+|       |   +-- kustomization.yaml
+|       |   +-- patches/
+|       +-- production/
+|           +-- kustomization.yaml
+|           +-- patches/
+|
++-- terraform/              # Infrastructure
++-- monitoring/             # Dashboards, alert rules
++-- argocd/                 # ArgoCD application manifests
+|
++-- .github/
+    +-- workflows/
+        +-- ci-cd.yml
+        +-- terraform.yml

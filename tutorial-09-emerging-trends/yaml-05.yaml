@@ -1,0 +1,16 @@
+# Grafana Machine Learning anomaly detection job
+apiVersion: grafana.ml/v1alpha1
+kind: OutlierDetector
+metadata:
+  name: payment-service-latency-anomaly
+spec:
+  datasourceUID: prometheus
+  query: |
+    histogram_quantile(0.95,
+      sum by (le) (rate(http_request_duration_seconds_bucket{job="payment-service"}[5m]))
+    )
+  interval: 5m
+  algorithm:
+    name: dbscan
+    sensitivity: 0.5
+  grafanaFolder: Automated Alerts

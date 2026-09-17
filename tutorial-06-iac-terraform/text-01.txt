@@ -1,0 +1,6 @@
+Write          Plan           Apply
+------         ------         ------
+Define         Terraform      Terraform
+resources  ->   shows what ->   makes the
+in .tf         will change    changes
+files          (diff view)    for real

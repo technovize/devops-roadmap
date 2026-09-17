@@ -1,0 +1,12 @@
+Already holds: SAA-C03 and/or CKA
+               v
+Month 1–4:  AWS DevOps Engineer – Professional (DOP-C02)
+            [The primary senior DevOps credential in the AWS ecosystem]
+            v
+Month 5–7:  Certified Kubernetes Security Specialist (CKS)
+            [Validates security depth; requires active CKA]
+            v
+Month 7–9:  Choose your specialization:
+            +-- AWS Security Specialty (SCS-C02)  -> Security track
+            +-- Prometheus Certified Associate (PCA) -> Observability track
+            +-- HashiCorp Vault Associate (002)   -> Platform/secrets track

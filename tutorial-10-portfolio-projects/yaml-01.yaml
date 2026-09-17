@@ -1,0 +1,65 @@
+#!/bin/bash
+# scripts/setup-cluster.sh — run after terraform apply
+set -euo pipefail
+
+CLUSTER_NAME=$1
+REGION=${2:-us-east-1}
+ENVIRONMENT=${3:-staging}
+
+echo "=== Configuring kubectl ==="
+aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$REGION"
+
+echo "=== Installing cluster essentials via Helm ==="
+
+# Ingress NGINX
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace \
+  --set controller.replicaCount=2 \
+  --set controller.nodeSelector."kubernetes.io/os"=linux \
+  --wait
+
+# cert-manager — automatic TLS certificate management
+helm upgrade --install cert-manager cert-manager \
+  --repo https://charts.jetstack.io \
+  --namespace cert-manager --create-namespace \
+  --set installCRDs=true \
+  --wait
+
+# Apply ClusterIssuer for Let's Encrypt
+kubectl apply -f - <<EOF
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: ops@myapp.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+EOF
+
+# Cluster Autoscaler
+helm upgrade --install cluster-autoscaler autoscaler/cluster-autoscaler \
+  --namespace kube-system \
+  --set autoDiscovery.clusterName="$CLUSTER_NAME" \
+  --set awsRegion="$REGION" \
+  --set rbac.serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="$(
+    terraform -chdir=terraform/environments/$ENVIRONMENT output -raw cluster_autoscaler_role_arn
+  )" \
+  --wait
+
+# External Secrets Operator
+helm upgrade --install external-secrets external-secrets \
+  --repo https://charts.external-secrets.io \
+  --namespace external-secrets --create-namespace \
+  --wait
+
+echo "=== Cluster setup complete ==="
+kubectl get nodes
+kubectl get pods --all-namespaces

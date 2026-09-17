@@ -1,0 +1,7 @@
+- name: Run tests
+  run: |
+    #!/bin/bash
+    set -e
+    pip install -r requirements.txt
+    python -m pytest tests/ --cov=app --cov-report=xml
+    echo "Tests passed."

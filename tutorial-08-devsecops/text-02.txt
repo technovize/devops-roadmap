@@ -1,0 +1,6 @@
+[Threat     [SAST +      [DAST +        [Runtime
+ Modeling]   SCA +        Integration    Protection +
+     |        Secrets      Tests]         Monitoring]
+     |        Scan]            |               |
+     v           v             v               v
+  Design -> Develop -> Test -> Stage -> Deploy -> Production

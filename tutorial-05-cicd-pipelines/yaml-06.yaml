@@ -1,0 +1,38 @@
+# .github/workflows/ci.yml
+# EXERCISE: Fill in the missing steps (marked with TODO)
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        # TODO: use actions/checkout@v4
+
+      - name: Set up Python
+        # TODO: use actions/setup-python@v5 with python-version 3.12 and cache pip
+
+      - name: Install dependencies
+        # TODO: run pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run linting
+        # TODO: run flake8 and black --check
+
+      - name: Run tests
+        # TODO: run pytest with coverage and junit output
+
+      - name: Upload coverage
+        # TODO: use codecov/codecov-action@v4
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      # TODO: checkout, login to GHCR, build and push image

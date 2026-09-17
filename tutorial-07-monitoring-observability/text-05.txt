@@ -1,0 +1,11 @@
+# Rate — requests per second
+sum(rate(http_requests_total{job="$service"}[5m]))
+
+# Errors — error rate percentage
+100 * sum(rate(http_requests_total{job="$service", status_code=~"5.."}[5m]))
+    / sum(rate(http_requests_total{job="$service"}[5m]))
+
+# Duration — p50, p95, p99
+histogram_quantile(0.99,
+  sum by (le) (rate(http_request_duration_seconds_bucket{job="$service"}[5m]))
+)

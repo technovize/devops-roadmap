@@ -1,0 +1,25 @@
+Developer pushes code
+         |
+         v
+GitHub Actions CI/CD:
+  test -> build -> scan -> sign -> push image -> update GitOps repo
+         |
+         v
+ArgoCD detects image tag change in GitOps repo
+         |
+         v
+Argo Rollouts: canary deployment (5% -> 25% -> 50% -> 100%)
+         |
+         v
+Kubernetes (EKS):
+  Django app (3 replicas) + Celery worker + Nginx
+         |
+         +-- PostgreSQL (RDS, private subnet)
+         +-- Redis (ElastiCache, private subnet)
+         +-- S3 (static files via CloudFront)
+
+Observability:
+  Prometheus -> Grafana (metrics)
+  Loki + Promtail (logs)
+  Tempo + OTel (traces)
+  Alertmanager -> Slack/PagerDuty

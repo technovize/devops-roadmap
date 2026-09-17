@@ -1,0 +1,4 @@
+Year 1: Earn CKA + SAA-C03 + Terraform Associate
+Year 2: Earn DOP-C02 (renews SAA-C03 automatically)
+Year 3: CKA expires — take CKS exam (renews CKA automatically)
+Year 4: Terraform Associate expires — pass new version exam

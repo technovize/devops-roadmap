@@ -1,0 +1,45 @@
+Template: CKA 12-Week Study Schedule
+
+Week 1-2: Core Concepts
+Daily: 30 min video + 90 min hands-on lab + 15 min practice questions
+Topics: Pods, Deployments, Services, Namespaces, ConfigMaps, Secrets
+Lab: KodeKloud Kubernetes for Beginners labs (free)
+
+Week 3-4: Workloads & Scheduling
+Daily: 30 min video + 90 min hands-on lab + 15 min practice questions
+Topics: Resource limits, DaemonSets, StatefulSets, Jobs, CronJobs
+Topics: Node affinity, taints, tolerations, pod priority
+
+Week 5-6: Cluster Architecture & Administration
+Daily: 30 min video + 90 min hands-on lab + 15 min practice questions
+Topics: kubeadm installation, etcd backup/restore, cluster upgrades
+Topics: RBAC, service accounts, certificate signing requests
+Lab: Build a cluster from scratch with kubeadm (use Vagrant or EC2)
+
+Week 7-8: Networking
+Daily: 30 min video + 90 min hands-on lab + 15 min practice questions
+Topics: CNI plugins, NetworkPolicy, Services deep dive, Ingress
+Topics: CoreDNS, kube-proxy, pod networking
+Lab: Implement NetworkPolicies from scratch
+
+Week 9-10: Storage
+Daily: 30 min video + 90 min hands-on lab + 15 min practice questions
+Topics: PersistentVolumes, PVCs, StorageClasses
+Topics: Volume types, access modes, reclaim policies
+
+Week 11: Troubleshooting (THE MOST IMPORTANT WEEK)
+Daily: 2 hours — break things, fix them, repeat
+Scenarios:
+- Kill the kube-scheduler, diagnose, and fix
+- Corrupt the etcd data directory, restore from backup
+- Break a NetworkPolicy, debug connection failures
+- Deploy a bad image, observe OOMKill, fix resource limits
+
+Week 12: Full exam simulations
+Day 1-2: Run killer.sh exam 1 (included with registration)
+Day 3: Review all incorrect answers
+Day 4-5: Run killer.sh exam 2
+Day 6: Light review of weak areas
+Day 7: REST — do not study the day before the exam
+
+Scoring target: 80%+ on killer.sh before scheduling the real exam

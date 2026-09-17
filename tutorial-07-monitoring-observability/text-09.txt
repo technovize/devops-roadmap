@@ -1,0 +1,4 @@
+Error Budget = 1 - SLO
+             = 1 - 0.999
+             = 0.001 (0.1%)
+             = ~43.8 minutes/month of allowable downtime

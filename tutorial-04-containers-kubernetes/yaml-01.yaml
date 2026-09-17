@@ -1,0 +1,20 @@
+# pod.yaml — rarely used directly; use Deployments instead
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app-pod
+  labels:
+    app: my-app
+spec:
+  containers:
+    - name: my-app
+      image: myregistry/my-app:1.0.0
+      ports:
+        - containerPort: 8000
+      resources:
+        requests:
+          cpu: "250m"       # 0.25 CPU cores
+          memory: "256Mi"   # 256 megabytes
+        limits:
+          cpu: "500m"       # Maximum 0.5 CPU cores
+          memory: "512Mi"   # Maximum 512 megabytes

@@ -1,0 +1,6 @@
+# Week 1–2: Core concepts — Pods, Deployments, Services, Namespaces
+# Week 3–4: Configuration — ConfigMaps, Secrets, resource limits, node affinity
+# Week 5–6: Cluster administration — kubeadm, etcd backup, cluster upgrades, RBAC
+# Week 7–8: Networking — NetworkPolicy, Ingress, CoreDNS, CNI troubleshooting
+# Week 9–10: Storage — PV, PVC, StorageClass, volume access modes
+# Week 11–12: Troubleshooting — deliberate break things and fix them; run killer.sh twice

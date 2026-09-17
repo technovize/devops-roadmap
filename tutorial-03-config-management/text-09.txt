@@ -1,0 +1,12 @@
+# Error: "AnsibleUndefinedVariable: 'nginx_port' is undefined"
+
+# Fix A: Define in playbook vars section
+vars:
+  nginx_port: 80
+
+# Fix B: Define in role defaults (lowest precedence, always available)
+# defaults/main.yml
+nginx_port: 80
+
+# Fix C: Use default filter in template
+listen {{ nginx_port | default(80) }};

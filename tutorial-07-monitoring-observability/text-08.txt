@@ -1,0 +1,26 @@
+# LogQL — Loki's query language (similar to PromQL)
+
+# Select all logs from the my-app service in production
+{namespace="production", app="my-app"}
+
+# Filter to error-level logs
+{namespace="production", app="my-app"} |= "ERROR"
+
+# Parse JSON logs and filter by field value
+{namespace="production", app="my-app"}
+  | json
+  | level = "error"
+  | operation = "process_payment"
+
+# Count error log rate per minute
+sum(rate({namespace="production", app="my-app"} |= "ERROR" [1m]))
+
+# Extract a field from JSON and use it as a metric
+sum by (user_id) (
+  count_over_time(
+    {namespace="production", app="my-app"}
+      | json
+      | level = "error"
+      [5m]
+  )
+)

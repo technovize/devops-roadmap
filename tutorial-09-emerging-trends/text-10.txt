@@ -1,0 +1,13 @@
+# With the InMemoryProvider, changes require application restart
+# For runtime changes without restart, use a server-side provider:
+
+# LaunchDarkly:
+from openfeature.provider.launchdarkly import LaunchDarklyProvider
+api.set_provider(LaunchDarklyProvider(sdk_key=os.environ["LD_SDK_KEY"]))
+
+# Unleash:
+from openfeature.provider.unleash import UnleashProvider
+api.set_provider(UnleashProvider(url="http://unleash:4242", auth_token="..."))
+
+# Note: Provider changes take effect immediately on next flag evaluation
+# No application restart required with server-side providers

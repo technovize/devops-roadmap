@@ -1,0 +1,11 @@
+# In GitHub Actions, ensure the package write permission is set:
+permissions:
+  contents: read
+  packages: write    # Required for GHCR
+
+# And login before pushing:
+- uses: docker/login-action@v3
+  with:
+    registry: ghcr.io
+    username: ${{ github.actor }}
+    password: ${{ secrets.GITHUB_TOKEN }}  # Not a personal token

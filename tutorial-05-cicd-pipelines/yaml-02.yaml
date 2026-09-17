@@ -1,0 +1,25 @@
+# .github/workflows/reusable-deploy.yml (in a shared repo)
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image_tag:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Deploy
+        run: |
+          echo "Deploying ${{ inputs.image_tag }} to ${{ inputs.environment }}"
+          # ... deploy steps ...

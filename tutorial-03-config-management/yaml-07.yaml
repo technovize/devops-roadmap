@@ -1,0 +1,11 @@
+# Problem: Using command/shell module — always reports "changed"
+- name: Deploy config
+  command: cp nginx.conf /etc/nginx/nginx.conf
+  notify: Restart Nginx  # Fires EVERY time
+
+# Fix: Use the copy module which detects actual changes
+- name: Deploy config
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+  notify: Restart Nginx  # Only fires when file actually changes

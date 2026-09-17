@@ -1,0 +1,64 @@
+# Create a cluster
+kind create cluster --name gitops-lab
+
+# Install ArgoCD
+kubectl create namespace argocd
+kubectl apply -n argocd -f \
+  https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Wait for ArgoCD to be ready
+kubectl wait --for=condition=Ready pod --all -n argocd --timeout=300s
+
+# Get the admin password
+kubectl get secret argocd-initial-admin-secret \
+  -n argocd \
+  -o jsonpath="{.data.password}" | base64 -d && echo
+
+# Port-forward to access the UI
+kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+
+# Install ArgoCD CLI
+brew install argocd
+
+# Login
+argocd login localhost:8080 \
+  --username admin \
+  --password $(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d) \
+  --insecure
+
+# Create your first Application
+kubectl apply -f - << 'EOF'
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guestbook
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+EOF
+
+# Watch the sync
+argocd app get guestbook
+argocd app sync guestbook
+argocd app wait guestbook
+
+# Test self-healing: manually delete a resource
+kubectl delete deployment guestbook-ui -n guestbook
+# ArgoCD will recreate it within 3 minutes (selfHeal: true)
+kubectl get pods -n guestbook -w
+
+# Clean up
+kind delete cluster --name gitops-lab

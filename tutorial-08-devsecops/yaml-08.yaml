@@ -1,0 +1,21 @@
+# Error: "Read-only file system"
+
+# Diagnose: find which paths the app writes to
+kubectl exec -it myapp-pod -- strace -e openat python app.py 2>&1 | grep O_WRONLY
+
+# Fix: Mount emptyDir volumes for required writable paths
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+  - name: cache
+    mountPath: /app/.cache
+  - name: logs
+    mountPath: /var/log/app
+
+volumes:
+  - name: tmp
+    emptyDir: {}
+  - name: cache
+    emptyDir: {}
+  - name: logs
+    emptyDir: {}

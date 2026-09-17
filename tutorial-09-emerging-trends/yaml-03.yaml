@@ -1,0 +1,40 @@
+# catalog-info.yaml — placed in every service repository
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: payment-service
+  description: Handles payment processing and transaction management
+  annotations:
+    github.com/project-slug: myorg/payment-service
+    backstage.io/techdocs-ref: dir:.
+    grafana/dashboard-selector: "title =~ 'Payment Service'"
+    pagerduty.com/service-id: P8V3DJK
+    argocd/app-name: payment-service-production
+
+  tags:
+    - python
+    - django
+    - payments
+    - pci-dss
+
+  links:
+    - url: https://grafana.myapp.com/d/payment-service
+      title: Grafana Dashboard
+      icon: dashboard
+    - url: https://wiki.myapp.com/runbooks/payment-service
+      title: Runbook
+      icon: docs
+
+spec:
+  type: service
+  lifecycle: production
+  owner: team-payments
+  system: checkout-system
+
+  dependsOn:
+    - component:database-primary
+    - component:redis-cache
+    - component:stripe-integration
+
+  providesApis:
+    - payment-api-v2

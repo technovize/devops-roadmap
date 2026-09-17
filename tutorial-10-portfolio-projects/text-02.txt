@@ -1,0 +1,11 @@
+---
+
+## 3. Project 1 — Production AWS Infrastructure with Terraform and EKS
+
+**What it demonstrates:** Terraform, AWS networking, EKS, RDS, ALB, IAM, remote state, modules, CI/CD for infrastructure
+
+**Complexity:** High
+**Time to build:** 2–3 days
+**Running cost:** ~$5–10/day (destroy when not presenting)
+
+### 3.1 Project Architecture

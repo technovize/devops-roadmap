@@ -1,0 +1,43 @@
+# Generate the role skeleton
+ansible-galaxy role init nginx_deploy
+
+# The structure created:
+# nginx_deploy/
+# +-- tasks/main.yml
+# +-- handlers/main.yml
+# +-- templates/
+# +-- files/
+# +-- vars/main.yml
+# +-- defaults/main.yml
+# +-- meta/main.yml
+# +-- README.md
+
+# Fill in defaults/main.yml with sensible defaults:
+cat > nginx_deploy/defaults/main.yml << 'EOF'
+nginx_port: 80
+web_root: /var/www/html
+site_title: "My Website"
+nginx_worker_processes: auto
+nginx_worker_connections: 1024
+EOF
+
+# Move tasks from Lab 3.2 into tasks/main.yml
+# Move handlers into handlers/main.yml
+# Move the template into templates/
+
+# Create a site.yml that uses the role:
+cat > site.yml << 'EOF'
+---
+- name: Configure all web servers
+  hosts: webservers
+  become: true
+  roles:
+    - role: nginx_deploy
+      vars:
+        nginx_port: 8080
+        site_title: "Production Site"
+EOF
+
+# Test the role
+ansible-playbook -i inventory.ini site.yml --check
+ansible-playbook -i inventory.ini site.yml

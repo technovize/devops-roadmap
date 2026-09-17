@@ -1,0 +1,20 @@
+# Root cause: Smoke tests not implemented or too shallow
+
+# Add meaningful smoke tests covering critical paths:
+# 1. Health endpoint
+# 2. Authentication (login returns 200, not 302)
+# 3. Core API endpoint returns expected data
+# 4. Database connectivity (a real DB query, not just /health)
+
+# Add to pipeline:
+- name: Deep smoke test
+  run: |
+    # Test authentication
+    TOKEN=$(curl -sf -X POST https://api.myapp.com/auth/token \
+      -H "Content-Type: application/json" \
+      -d '{"username":"smoketest","password":"${{ secrets.SMOKE_PASSWORD }}"}' \
+      | jq -r .token)
+
+    # Test authenticated endpoint
+    curl -sf -H "Authorization: Bearer $TOKEN" \
+      https://api.myapp.com/api/v1/status

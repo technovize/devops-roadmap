@@ -1,0 +1,18 @@
+# GitHub Actions with AI-powered test selection
+# Tools like Launchable, Trunk.io, and BuildPulse analyze historical test
+# results to predict which tests are most likely to fail for a given diff,
+# running the highest-risk tests first and deferring low-risk tests.
+
+- name: AI-powered test selection
+  uses: launchableinc/action@v1
+  with:
+    token: ${{ secrets.LAUNCHABLE_TOKEN }}
+
+- name: Run selected high-risk tests first
+  run: |
+    launchable record build --name $GITHUB_RUN_ID
+    launchable subset --target 20% pytest > selected_tests.txt
+    pytest $(cat selected_tests.txt) --junitxml=priority-tests.xml
+
+- name: Run remaining tests
+  run: pytest --ignore-glob="$(cat selected_tests.txt)" --junitxml=remaining-tests.xml

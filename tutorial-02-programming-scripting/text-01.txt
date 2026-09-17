@@ -1,0 +1,8 @@
+# Run a Python script
+python3 my_script.py
+
+# Run with arguments
+python3 deploy.py --env production --version 1.2.0
+
+# Check Python version
+python3 --version

@@ -1,0 +1,47 @@
+---
+- name: Update package cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install common utilities
+  apt:
+    name:
+      - curl
+      - wget
+      - vim
+      - htop
+      - unzip
+      - git
+      - ufw
+    state: present
+
+- name: Configure UFW — deny all inbound by default
+  ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: Allow SSH through firewall
+  ufw:
+    rule: allow
+    port: "22"
+    proto: tcp
+
+- name: Set timezone to UTC
+  timezone:
+    name: UTC
+
+- name: Configure automatic security updates
+  apt:
+    name: unattended-upgrades
+    state: present
+  notify: Enable unattended upgrades
+
+# roles/common/handlers/main.yml
+---
+- name: Enable unattended upgrades
+  service:
+    name: unattended-upgrades
+    enabled: yes
+    state: started

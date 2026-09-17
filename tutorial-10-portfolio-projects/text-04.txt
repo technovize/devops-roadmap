@@ -1,0 +1,34 @@
+# ADR-002: EKS over ECS for Container Orchestration
+
+## Status
+Accepted — 2026-03-15
+
+## Context
+We needed a container orchestration platform for a Python microservices
+architecture. The two primary candidates were AWS ECS (simpler, AWS-native)
+and EKS (Kubernetes, provider-agnostic, more complex).
+
+## Decision
+We chose EKS.
+
+## Rationale
+1. **Portability** — Kubernetes manifests can be applied to any cloud
+   provider's managed Kubernetes service. ECS task definitions lock us to AWS.
+2. **Ecosystem** — The Kubernetes ecosystem (Helm, ArgoCD, Keda, Prometheus
+   Operator) provides tooling we would have to build ourselves on ECS.
+3. **Team expertise** — The team has existing Kubernetes expertise; ECS
+   has a different operational model that would require retraining.
+4. **Future GitOps requirement** — Our roadmap includes ArgoCD for GitOps.
+   ArgoCD is a native Kubernetes tool.
+
+## Consequences
+- Higher operational complexity than ECS (cluster upgrades, node management)
+- Mitigated by using EKS managed node groups and Cluster Autoscaler
+- Higher learning curve for new engineers unfamiliar with Kubernetes
+- Mitigated by Backstage developer portal and internal documentation
+
+## Alternatives Rejected
+- **ECS with Fargate** — Rejected due to limited Helm/GitOps ecosystem
+  integration and higher per-task cost at our projected scale
+- **Self-managed Kubernetes on EC2** — Rejected due to control plane
+  management overhead; EKS eliminates this entirely

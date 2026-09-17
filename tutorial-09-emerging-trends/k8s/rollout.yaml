@@ -1,0 +1,98 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: my-app
+  namespace: production
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-app
+          image: ghcr.io/myorg/my-app:v1.3.0
+          ports:
+            - containerPort: 8000
+
+  strategy:
+    canary:
+      # Analysis — automatically check metrics at each step
+      analysis:
+        templates:
+          - templateName: success-rate
+        startingStep: 2
+        args:
+          - name: service-name
+            value: my-app
+
+      steps:
+        - setWeight: 5          # 5% of traffic -> canary
+        - pause: {duration: 10m}
+        - setWeight: 25
+        - pause: {duration: 10m}
+        - setWeight: 50
+        - pause: {duration: 10m}
+        - setWeight: 75
+        - pause: {duration: 10m}
+        # Full 100% happens automatically if all analysis passes
+
+      canaryService: my-app-canary     # Service pointing to canary pods
+      stableService: my-app-stable     # Service pointing to stable pods
+      trafficRouting:
+        nginx:
+          stableIngress: my-app-ingress
+
+---
+# AnalysisTemplate — the automated health gates at each step
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate
+  namespace: production
+spec:
+  args:
+    - name: service-name
+  metrics:
+    - name: success-rate
+      interval: 2m
+      successCondition: result[0] >= 0.95   # Require >= 95% success rate
+      failureLimit: 3
+
+      provider:
+        prometheus:
+          address: http://prometheus.monitoring.svc.cluster.local:9090
+          query: |
+            sum(
+              rate(http_requests_total{
+                service="{{args.service-name}}",
+                status_code!~"5.."
+              }[5m])
+            )
+            /
+            sum(
+              rate(http_requests_total{
+                service="{{args.service-name}}"
+              }[5m])
+            )
+
+    - name: latency-p99
+      interval: 2m
+      successCondition: result[0] <= 0.5    # Require p99 < 500ms
+      failureLimit: 3
+
+      provider:
+        prometheus:
+          address: http://prometheus.monitoring.svc.cluster.local:9090
+          query: |
+            histogram_quantile(0.99,
+              sum by (le) (
+                rate(http_request_duration_seconds_bucket{
+                  service="{{args.service-name}}"
+                }[5m])
+              )
+            )

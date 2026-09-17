@@ -1,0 +1,10 @@
+# Check your trigger configuration
+on:
+  push:
+    branches: [main]    # Only triggers on pushes to "main" — not "master"
+
+# Verify: which branch are you pushing to?
+git branch --show-current
+
+# Fix: adjust the branch name or your push target
+git push origin HEAD:main

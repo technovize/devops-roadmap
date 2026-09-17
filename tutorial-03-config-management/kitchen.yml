@@ -1,0 +1,18 @@
+driver:
+  name: docker
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: ubuntu-22.04
+  - name: ubuntu-20.04
+
+suites:
+  - name: default
+    run_list:
+      - recipe[myapp::default]
+    verifier:
+      name: inspec
+      inspec_tests:
+        - test/integration/default

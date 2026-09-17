@@ -1,0 +1,9 @@
+- name: Sign the container image
+  uses: sigstore/cosign-installer@v3
+
+- name: Sign with keyless OIDC
+  run: |
+    cosign sign --yes \
+      ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+  env:
+    COSIGN_EXPERIMENTAL: "true"

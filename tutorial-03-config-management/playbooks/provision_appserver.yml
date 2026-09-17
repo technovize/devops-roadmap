@@ -1,0 +1,71 @@
+---
+- name: Provision application server
+  hosts: appservers
+  become: true
+
+  vars:
+    app_name: "myapp"
+    app_port: 8000
+    python_version: "3.12"
+    db_host: "{{ lookup('env', 'DB_HOST') }}"
+    db_password: "{{ lookup('env', 'DB_PASSWORD') }}"
+
+  tasks:
+
+    - name: Install system dependencies
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+          - postgresql-client
+          - git
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Create application user
+      user:
+        name: "{{ app_name }}"
+        system: yes
+        shell: /bin/bash
+        home: "/opt/{{ app_name }}"
+
+    - name: Clone application repository
+      git:
+        repo: "https://github.com/myorg/{{ app_name }}.git"
+        dest: "/opt/{{ app_name }}/src"
+        version: "main"
+        force: yes
+
+    - name: Install Python dependencies
+      pip:
+        requirements: "/opt/{{ app_name }}/src/requirements.txt"
+        virtualenv: "/opt/{{ app_name }}/venv"
+        virtualenv_command: python3 -m venv
+
+    - name: Deploy environment configuration
+      template:
+        src: templates/app.env.j2
+        dest: "/opt/{{ app_name }}/.env"
+        owner: "{{ app_name }}"
+        mode: "0600"  # Restrictive permissions — contains secrets
+
+    - name: Deploy systemd service unit
+      template:
+        src: templates/app.service.j2
+        dest: "/etc/systemd/system/{{ app_name }}.service"
+      notify: Restart application
+
+    - name: Enable and start application service
+      systemd:
+        name: "{{ app_name }}"
+        enabled: yes
+        state: started
+        daemon_reload: yes
+
+  handlers:
+    - name: Restart application
+      systemd:
+        name: "{{ app_name }}"
+        state: restarted

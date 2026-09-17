@@ -1,0 +1,23 @@
+Developer commits code
+        |
+        v
++-------------------------------------------------------------+
+|                 CONTINUOUS INTEGRATION                      |
+|  Lint -> Unit Tests -> Integration Tests -> Build -> Scan       |
++-----------------------------+-------------------------------+
+                              | All checks pass
+                              v
++-------------------------------------------------------------+
+|               CONTINUOUS DELIVERY                           |
+|  Deploy to Staging -> E2E Tests -> Performance Tests          |
+|                              |                              |
+|                    [Manual Approval Gate]                   |
+|                              |                              |
+|                    Deploy to Production                     |
++-------------------------------------------------------------+
+                              | (Remove approval gate)
+                              v
++-------------------------------------------------------------+
+|             CONTINUOUS DEPLOYMENT                           |
+|  Automatic deploy to Production (no human approval)         |
++-------------------------------------------------------------+

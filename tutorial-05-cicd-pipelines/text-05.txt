@@ -1,0 +1,2 @@
+Build once ---> staging ---> [UAT] ---> [canary] ---> production
+               (same image tag promoted at each stage)

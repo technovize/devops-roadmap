@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-app-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"    # This label triggers automatic import by Grafana
+data:
+  my-app-overview.json: |
+    {
+      "title": "My App — Service Overview",
+      "uid": "my-app-overview",
+      "tags": ["my-app", "production"],
+      "refresh": "30s",
+      "time": { "from": "now-1h", "to": "now" },
+      "panels": [
+        {
+          "title": "Request Rate (req/s)",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+          "targets": [{
+            "expr": "sum(rate(http_requests_total{job=\"my-app\"}[5m]))",
+            "legendFormat": "req/s"
+          }]
+        },
+        {
+          "title": "Error Rate (%)",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "value": 0,   "color": "green" },
+                  { "value": 1,   "color": "yellow" },
+                  { "value": 5,   "color": "red" }
+                ]
+              }
+            }
+          },
+          "targets": [{
+            "expr": "100 * sum(rate(http_requests_total{job=\"my-app\",status_code=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=\"my-app\"}[5m]))",
+            "legendFormat": "error %"
+          }]
+        },
+        {
+          "title": "p95 Latency (seconds)",
+          "type": "graph",
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.50, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"my-app\"}[5m])))",
+              "legendFormat": "p50"
+            },
+            {
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"my-app\"}[5m])))",
+              "legendFormat": "p95"
+            },
+            {
+              "expr": "histogram_quantile(0.99, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"my-app\"}[5m])))",
+              "legendFormat": "p99"
+            }
+          ]
+        }
+      ]
+    }

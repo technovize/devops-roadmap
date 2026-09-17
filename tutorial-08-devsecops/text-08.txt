@@ -1,0 +1,43 @@
+# falco-rules.yaml — Custom Falco rules
+
+# Alert when a shell is spawned inside a container (often indicates breach)
+- rule: Shell Spawned in Container
+  desc: A shell was spawned in a container. This is unexpected in production.
+  condition: >
+    spawned_process
+    and container
+    and proc.name in (shell_binaries)
+    and not proc.pname in (shell_binaries)
+    and not container.image.repository in (trusted_images)
+  output: >
+    Shell spawned in container
+    (user=%user.name container=%container.name image=%container.image.repository
+     shell=%proc.name parent=%proc.pname cmdline=%proc.cmdline)
+  priority: CRITICAL
+  tags: [container, shell, mitre_execution]
+
+# Alert when sensitive files are read
+- rule: Read Sensitive File
+  desc: An attempt to read a file containing sensitive information.
+  condition: >
+    open_read
+    and sensitive_files
+    and not proc.name in (allowed_processes)
+  output: >
+    Sensitive file opened for reading
+    (user=%user.name process=%proc.name file=%fd.name
+     container=%container.name image=%container.image.repository)
+  priority: WARNING
+
+# Alert on outbound network connections to unexpected destinations
+- rule: Unexpected Outbound Connection
+  desc: Container made an outbound connection to an unexpected IP
+  condition: >
+    outbound
+    and container
+    and not proc.name in (allowed_network_processes)
+    and not fd.sip in (allowed_ips)
+  output: >
+    Unexpected outbound connection
+    (process=%proc.name destination=%fd.sip:%fd.sport container=%container.name)
+  priority: WARNING

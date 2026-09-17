@@ -1,0 +1,55 @@
+# Create cluster with no default CNI (Cilium will replace it)
+kind create cluster --config - << 'EOF'
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+  - role: worker
+networking:
+  disableDefaultCNI: true    # Cilium will be the CNI
+  kubeProxyMode: none        # Cilium replaces kube-proxy too
+EOF
+
+# Install Cilium
+helm repo add cilium https://helm.cilium.io/
+helm install cilium cilium/cilium \
+  --namespace kube-system \
+  --set kubeProxyReplacement=true \
+  --set hubble.relay.enabled=true \
+  --set hubble.ui.enabled=true
+
+# Wait for Cilium to be ready
+kubectl wait --for=condition=Ready pod -l k8s-app=cilium \
+  -n kube-system --timeout=300s
+
+# Install Hubble CLI
+HUBBLE_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/hubble/master/stable.txt)
+curl -L --remote-name-all \
+  "https://github.com/cilium/hubble/releases/download/$HUBBLE_VERSION/hubble-linux-amd64.tar.gz"
+tar xzvf hubble-linux-amd64.tar.gz
+sudo mv hubble /usr/local/bin/
+
+# Port-forward Hubble relay
+kubectl port-forward -n kube-system svc/hubble-relay 4245:80 &
+sleep 5
+
+# Deploy a test application
+kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/HEAD/examples/minikube/http-sw-app.yaml
+
+# Generate some traffic
+kubectl exec -n default tiefighter -- \
+  curl -s -XPOST http://deathstar.default.svc.cluster.local/v1/request-landing
+
+# Observe traffic flows with Hubble
+hubble observe --namespace default --follow &
+kubectl exec -n default tiefighter -- \
+  curl -s http://deathstar.default.svc.cluster.local/v1/exhaust-port
+
+# Apply a NetworkPolicy via Cilium
+kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/HEAD/examples/minikube/sw_l3_l4_policy.yaml
+
+# Observe dropped packets (policy enforcement)
+hubble observe --namespace default --verdict DROPPED
+
+# Clean up
+kind delete cluster

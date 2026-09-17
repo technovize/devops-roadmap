@@ -1,0 +1,3 @@
+main ------*----*----*----*----* (deploys to production on every merge)
+           |    |    |
+           PR   PR   PR (short-lived branches, merged daily)

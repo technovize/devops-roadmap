@@ -1,0 +1,11 @@
+# Enforce the restricted security standard on the production namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    # Modes: enforce (block), audit (log), warn (warn)
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

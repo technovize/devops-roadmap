@@ -1,0 +1,6 @@
+Your Machine (Control Node)
+        |
+        | SSH
+        |
+   Target Server (Managed Node)
+   [No agent required — just Python + SSH]

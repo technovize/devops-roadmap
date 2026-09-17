@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: my-app
+  namespace: production
+  labels:
+    app: my-app
+spec:
+  selector:
+    matchLabels:
+      app: my-app        # Match Services with this label
+
+  endpoints:
+    - port: web          # The named port in the Service
+      path: /metrics
+      interval: 30s      # Scrape every 30 seconds
+      scrapeTimeout: 10s
+
+  namespaceSelector:
+    matchNames:
+      - production

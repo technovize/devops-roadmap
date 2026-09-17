@@ -1,0 +1,17 @@
+# Install Pixie on Kubernetes
+bash -c "$(curl -fsSL https://withpixie.ai/install.sh)"
+px deploy
+
+# Immediately get HTTP request latency for all services
+px run px/http_data
+
+# Get all database queries with execution time
+px run px/mysql_data
+px run px/pgsql_data
+
+# Get a live service dependency map
+px run px/service_stats
+
+# Debug a specific pod with full HTTP request/response data
+px run px/http_data_filtered -- -start_time='-5m' \
+  -pod='production/payment-service-abc123'

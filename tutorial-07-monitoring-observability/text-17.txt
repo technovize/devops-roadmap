@@ -1,0 +1,11 @@
+# Problem: 'for' not set, alert fires instantly
+- alert: HighErrorRate
+  expr: http_error_rate > 0.05
+  # Missing: for: 5m
+
+# Fix: Add a duration to prevent flapping
+- alert: HighErrorRate
+  expr: http_error_rate > 0.05
+  for: 5m       # Must be true for 5 continuous minutes before firing
+  labels:
+    severity: critical

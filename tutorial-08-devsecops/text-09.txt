@@ -1,0 +1,11 @@
+# Bandit flags: B101 - assert_used
+def test_user_creation():
+    user = create_user("test@example.com")
+    assert user.id is not None   # B101: This is fine in tests!
+
+# Fix: Add a noqa comment or configure bandit.yaml to skip in test files
+assert user.id is not None   # nosec B101
+
+# Or in bandit.yaml:
+assert_used:
+  skips: ['*_test.py', 'test_*.py']

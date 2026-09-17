@@ -1,0 +1,22 @@
+# Common cause 1: Missing environment variables
+# Fix: Add them to the job env: block
+env:
+  DATABASE_URL: postgres://...
+  SECRET_KEY: test-secret-key
+
+# Common cause 2: Service containers not ready yet
+# Fix: Add health check options to the service
+services:
+  postgres:
+    image: postgres:16-alpine
+    options: >-
+      --health-cmd pg_isready
+      --health-interval 10s
+      --health-timeout 5s
+      --health-retries 5
+
+# Common cause 3: Different Python/Node version
+# Fix: Pin version explicitly
+- uses: actions/setup-python@v5
+  with:
+    python-version: "3.12"  # Pin exact version, not "3.x"

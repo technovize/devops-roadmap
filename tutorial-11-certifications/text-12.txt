@@ -1,0 +1,17 @@
+CKA includes one free retake (included in the $395 fee)
+Use your retake wisely:
+
+1. Review your score report: which domains did you fail?
+   Focus all retake study on those specific domains
+
+2. Wait at least 2 weeks before retaking — study genuinely
+   Do NOT retake immediately after failing — you will fail again
+
+3. Run killer.sh again — focus on tasks you got wrong the first time
+
+4. Identify speed bottlenecks: were you too slow or did you not know the answer?
+   - Too slow -> Practice the specific command sequences 50 times
+   - Didn't know -> Study the specific topic with hands-on labs
+
+For AWS exams: no free retake, but you can retake after 14 days
+Schedule a retake within the year to maintain momentum

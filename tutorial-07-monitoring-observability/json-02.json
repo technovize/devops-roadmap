@@ -1,0 +1,2 @@
+{"event": "Payment processing started", "level": "info", "timestamp": "2026-05-06T14:23:01Z", "user_id": "usr_8827fba", "amount": 149.99, "currency": "USD", "operation": "process_payment"}
+{"event": "Payment processed successfully", "level": "info", "timestamp": "2026-05-06T14:23:01Z", "user_id": "usr_8827fba", "amount": 149.99, "charge_id": "ch_3abc123", "duration_ms": 234}

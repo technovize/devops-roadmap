@@ -1,0 +1,62 @@
+# Blue deployment — current production
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-blue
+  namespace: production
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: my-app
+      slot: blue
+  template:
+    metadata:
+      labels:
+        app: my-app
+        slot: blue
+        version: v1.2.0
+    spec:
+      containers:
+        - name: my-app
+          image: ghcr.io/myorg/my-app:v1.2.0
+
+# Green deployment — new version (scaled up before switch)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-green
+  namespace: production
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: my-app
+      slot: green
+  template:
+    metadata:
+      labels:
+        app: my-app
+        slot: green
+        version: v1.3.0
+    spec:
+      containers:
+        - name: my-app
+          image: ghcr.io/myorg/my-app:v1.3.0
+
+# Production service — switch by changing this selector
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+  namespace: production
+spec:
+  selector:
+    app: my-app
+    slot: blue        # <- Change to "green" to switch traffic
+  ports:
+    - port: 80
+      targetPort: 8000

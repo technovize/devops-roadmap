@@ -1,0 +1,7 @@
+# List available platforms
+eb platform list
+
+# Reinitialize with correct platform
+eb init paas-demo \
+  --platform "Python 3.11 running on 64bit Amazon Linux 2023" \
+  --region us-east-1

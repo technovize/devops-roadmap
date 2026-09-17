@@ -1,0 +1,16 @@
+# Error: "Failed to publish to GitHub"
+
+# Check GitHub token scopes (needs repo + workflow permissions)
+# Settings -> Developer Settings -> Personal Access Tokens -> Scopes:
+# (yes) repo (Full control of private repositories)
+# (yes) workflow (Update GitHub Action workflows)
+# (yes) admin:org (if publishing to an org repo)
+
+# Check Backstage GitHub integration config in app-config.yaml:
+integrations:
+  github:
+    - host: github.com
+      token: ${GITHUB_TOKEN}  # Ensure this env var is set
+
+# Check if the organization allows new repositories
+# GitHub -> Organization -> Settings -> Member privileges -> Repository creation

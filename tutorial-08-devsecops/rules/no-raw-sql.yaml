@@ -1,0 +1,14 @@
+rules:
+  - id: django-raw-sql
+    patterns:
+      - pattern: $MODEL.objects.raw($QUERY, ...)
+      - pattern-not: $MODEL.objects.raw($QUERY, [...])  # OK if parameterized
+    message: >
+      Potential SQL injection: raw() called without parameters.
+      Use parameterized queries: Model.objects.raw(query, [params])
+    languages: [python]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: CWE-89
+      owasp: A03:2021 - Injection

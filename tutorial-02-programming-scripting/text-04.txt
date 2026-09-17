@@ -1,0 +1,6 @@
+# Bad: Creates a duplicate resource every run
+create_s3_bucket("my-bucket")
+
+# Good: Creates only if it doesn't exist
+if not bucket_exists("my-bucket"):
+    create_s3_bucket("my-bucket")

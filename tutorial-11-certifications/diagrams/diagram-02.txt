@@ -1,0 +1,16 @@
+Already holds: DOP-C02, CKA, CKS (or equivalent)
+               v
+Option A: Multi-Cloud Architect
+  +-- Google Cloud Professional DevOps Engineer
+  +-- Azure DevOps Engineer Expert (AZ-400)
+  +-- HashiCorp Terraform Professional (if available)
+
+Option B: Cloud-Native Specialist
+  +-- CKAD (complement CKA with app developer perspective)
+  +-- PCA (Prometheus Certified Associate)
+  +-- Service mesh / GitOps specialization (vendor-specific)
+
+Option C: Security Focus
+  +-- AWS Security Specialty (SCS-C02)
+  +-- CKS renewal and depth
+  +-- CISSP or CCSP (broader security architecture credentials)

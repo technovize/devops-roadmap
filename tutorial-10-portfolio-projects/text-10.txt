@@ -1,0 +1,15 @@
+Preparation strategy: For each project, always document:
+
+1. What I would do differently:
+   - "I would implement Argo Rollouts from day one instead of basic rolling updates"
+   - "I would add FinOps tagging and cost allocation from the start"
+
+2. What I didn't have time to implement:
+   - "I didn't implement Velero for Kubernetes backup — critical for production"
+   - "I didn't implement multi-region failover — single region is a risk"
+
+3. What I learned the hard way:
+   - "I learned that not setting resource limits causes node OOM crashes under load"
+   - "I learned that Terraform state corruption happens when two engineers apply simultaneously — now using DynamoDB locking"
+
+Having these answers ready shows mature engineering judgment.

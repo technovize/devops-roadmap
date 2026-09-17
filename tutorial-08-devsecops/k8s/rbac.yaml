@@ -1,0 +1,46 @@
+# Service Account for the application
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-app-service-account
+  namespace: production
+  annotations:
+    # Allow this SA to assume an AWS IAM role (IRSA)
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789:role/MyAppProductionRole
+
+# Role: what this SA is allowed to do in the production namespace
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: my-app-role
+  namespace: production
+rules:
+  # Read ConfigMaps only (to load non-secret config)
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list"]
+    resourceNames: ["my-app-config"]   # Only this specific ConfigMap
+
+  # Read own Secrets only
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+    resourceNames: ["my-app-secrets"]
+
+# Bind the Role to the ServiceAccount
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: my-app-role-binding
+  namespace: production
+subjects:
+  - kind: ServiceAccount
+    name: my-app-service-account
+    namespace: production
+roleRef:
+  kind: Role
+  name: my-app-role
+  apiGroup: rbac.authorization.k8s.io

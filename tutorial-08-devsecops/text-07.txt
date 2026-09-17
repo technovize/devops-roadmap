@@ -1,0 +1,8 @@
+# Drata, Vanta, Secureframe, Tugboat Logic — automated evidence collection
+# These tools integrate with your cloud provider, CI/CD, and MDM to auto-collect:
+# - AWS Config rules passing/failing
+# - GitHub branch protection enabled
+# - All engineers using MFA
+# - Penetration test reports
+# - Access reviews completed
+# - Change management approvals logged

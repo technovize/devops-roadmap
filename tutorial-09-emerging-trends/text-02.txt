@@ -1,0 +1,10 @@
+# Install Flux CLI
+brew install fluxcd/tap/flux
+
+# Bootstrap Flux with GitHub (creates a GitOps repo and installs Flux in-cluster)
+flux bootstrap github \
+  --owner=myorg \
+  --repository=fleet-infra \
+  --branch=main \
+  --path=clusters/production \
+  --personal

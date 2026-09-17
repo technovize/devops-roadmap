@@ -1,0 +1,13 @@
+# Exercise: Write these queries from scratch
+
+# R — Rate: Total requests per second
+# (write your PromQL here)
+
+# E — Error rate: Percentage of 5xx responses
+# (write your PromQL here)
+
+# D — Duration: p50, p95, p99 latency
+# (write your PromQL here)
+
+# BONUS: Alert rule — fire if error rate > 5% for 2 minutes
+# (write your Prometheus alerting rule YAML here)

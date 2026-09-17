@@ -1,0 +1,12 @@
++-----------------------------------------+
+|           JENKINS CONTROLLER            |
+|  (Orchestrates jobs, stores config,     |
+|   serves the web UI, dispatches builds) |
++---------------------+-------------------+
+                      |
+          +-----------+-----------+
+          |           |           |
+   +------v--+  +-----v---+  +---v-----+
+   | Agent 1 |  | Agent 2 |  | Agent 3 |
+   | (Linux) |  | (Linux) |  |(Docker) |
+   +---------+  +---------+  +---------+

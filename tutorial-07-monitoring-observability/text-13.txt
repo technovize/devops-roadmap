@@ -1,0 +1,16 @@
+Exercise:
+1. Define an availability SLO for the Flask app
+   SLO: ___% of requests return a non-5xx response over a 30-day window
+
+2. Calculate the error budget:
+   Error budget = ___% of total requests allowed to fail
+
+3. Write the PromQL query that measures current SLO compliance
+
+4. Write the PromQL query that shows error budget remaining as a percentage
+
+5. Fill in the decision table:
+   Budget remaining > 50%  -> Action: ___
+   Budget remaining 25-50% -> Action: ___
+   Budget remaining < 10%  -> Action: ___
+   Budget exhausted         -> Action: ___

@@ -1,0 +1,18 @@
+FOUNDATIONAL
++-- AWS Certified Cloud Practitioner (CLF-C02)
+        | (optional — skip if you already have cloud experience)
+        v
+ASSOCIATE
++-- AWS Certified Solutions Architect – Associate (SAA-C03)  <- best starting point
++-- AWS Certified Developer – Associate (DVA-C02)
++-- AWS Certified SysOps Administrator – Associate (SOA-C02)
+        |
+        v
+PROFESSIONAL
++-- AWS Certified Solutions Architect – Professional (SAP-C02)
++-- AWS Certified DevOps Engineer – Professional (DOP-C02)  <- primary DevOps target
+
+SPECIALTY
++-- AWS Certified Security – Specialty (SCS-C02)
++-- AWS Certified Advanced Networking – Specialty (ANS-C01)
++-- AWS Certified Database – Specialty (DBS-C01)

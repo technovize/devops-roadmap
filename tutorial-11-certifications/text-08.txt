@@ -1,0 +1,68 @@
+Scenario 1: Multi-AZ Web Application
+A company runs a web application on EC2 instances behind an ALB.
+They want the application to be available if one data center fails.
+What is the minimum architecture change required?
+
+Your answer:
+[Write here before reading the answer]
+
+Answer: Deploy EC2 instances in at least 2 Availability Zones within the same region.
+The ALB automatically distributes traffic across healthy instances in both AZs.
+If one AZ fails, the ALB routes all traffic to instances in the remaining AZ.
+
+---
+
+Scenario 2: Cost Optimization
+A data processing application runs 8 EC2 instances 24/7.
+The workload is predictable and consistent. Monthly bill: $2,400.
+How can they reduce costs without compromising availability?
+
+Your answer:
+[Write here]
+
+Answer: Purchase 1-year Reserved Instances for the baseline capacity.
+Reserved Instances offer up to 72% discount over On-Demand pricing.
+For a consistent, predictable workload, Reserved Instances provide the
+best cost savings with no architectural risk.
+Estimated new monthly bill: ~$670 (72% reduction).
+
+---
+
+Scenario 3: Database Selection
+A mobile gaming company expects 100,000 concurrent users with:
+- Sub-millisecond read latency requirement
+- 5 million items in a user profile database
+- Simple key-value access pattern
+- Unpredictable traffic spikes
+
+Which AWS database service is most appropriate?
+
+Your answer:
+[Write here]
+
+Answer: Amazon DynamoDB.
+Rationale: DynamoDB provides sub-millisecond latency, scales automatically
+to handle spikes with no capacity planning (on-demand mode), and is optimized
+for key-value access patterns. RDS would struggle with the latency requirement
+and auto-scaling limitations. ElastiCache could add caching but DynamoDB alone
+meets all stated requirements.
+
+---
+
+Scenario 4: Global Application
+A streaming service wants to serve video content to users in:
+- North America, Europe, Asia-Pacific
+- With the lowest possible latency
+- Minimizing data transfer costs from their US-based origin
+
+What AWS services address this requirement?
+
+Your answer:
+[Write here]
+
+Answer: Amazon CloudFront (CDN) with S3 as the origin.
+CloudFront caches content at 450+ edge locations globally.
+Users in each region are served from the nearest edge location,
+reducing latency from ~200ms (cross-continental) to <20ms (local edge).
+Data transfer from S3 to CloudFront is free — only CloudFront-to-user
+transfer is billed, at rates lower than direct S3 transfers.

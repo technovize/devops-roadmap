@@ -1,0 +1,5 @@
+aws_region        = "us-east-1"
+environment       = "staging"
+project_name      = "myapp"
+vpc_cidr          = "10.1.0.0/16"
+db_instance_class = "db.t3.small"

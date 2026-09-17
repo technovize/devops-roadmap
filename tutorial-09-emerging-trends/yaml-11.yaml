@@ -1,0 +1,57 @@
+# Install Argo Rollouts
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f \
+  https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+
+# Install the kubectl plugin
+brew install argoproj/tap/kubectl-argo-rollouts
+
+# Create a Rollout (replace Deployment)
+kubectl apply -f - << 'EOF'
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: myapp
+  namespace: default
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: app
+          image: argoproj/rollouts-demo:blue
+          ports:
+            - containerPort: 8080
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20    # 20% of traffic to canary
+        - pause: {duration: 30s}
+        - setWeight: 50
+        - pause: {duration: 30s}
+        - setWeight: 80
+        - pause: {duration: 30s}
+EOF
+
+# Watch the rollout
+kubectl argo rollouts get rollout myapp --watch
+
+# Trigger an update (new version)
+kubectl argo rollouts set image myapp app=argoproj/rollouts-demo:yellow
+
+# Watch the canary progress through steps
+kubectl argo rollouts get rollout myapp --watch
+
+# Manually promote (skip a pause)
+kubectl argo rollouts promote myapp
+
+# Simulate a failure and abort
+kubectl argo rollouts set image myapp app=argoproj/rollouts-demo:red
+kubectl argo rollouts abort myapp
+kubectl argo rollouts get rollout myapp --watch

@@ -1,0 +1,5 @@
+# Query PuppetDB for all nodes that failed their last Puppet run
+puppet query 'nodes { latest_report_status = "failed" }'
+
+# Generate a compliance report
+puppet report --last

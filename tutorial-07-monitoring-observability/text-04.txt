@@ -1,0 +1,88 @@
+# -- Basic Selectors ----------------------------------------------------------
+
+# All HTTP request counters
+http_requests_total
+
+# Only GET requests to /api/users with 200 status
+http_requests_total{method="GET", endpoint="/api/users", status_code="200"}
+
+# All non-200 responses (regex match)
+http_requests_total{status_code!~"2.."}
+
+
+# -- Rate and Increase --------------------------------------------------------
+
+# Requests per second over the last 5 minutes (use rate() for counters)
+rate(http_requests_total[5m])
+
+# Total new requests in the last hour
+increase(http_requests_total[1h])
+
+# Error rate (errors per second)
+rate(http_errors_total[5m])
+
+
+# -- Aggregation --------------------------------------------------------------
+
+# Total request rate across all pods (sum across all label dimensions)
+sum(rate(http_requests_total[5m]))
+
+# Request rate broken down by endpoint
+sum by (endpoint) (rate(http_requests_total[5m]))
+
+# Request rate broken down by status code family (2xx, 4xx, 5xx)
+sum by (status_class) (
+  label_replace(
+    rate(http_requests_total[5m]),
+    "status_class", "$1xx", "status_code", "([0-9]).*"
+  )
+)
+
+
+# -- Latency Percentiles ------------------------------------------------------
+
+# 50th percentile (median) response time
+histogram_quantile(0.50,
+  sum by (le, endpoint) (
+    rate(http_request_duration_seconds_bucket[5m])
+  )
+)
+
+# 95th percentile response time — the most useful latency metric
+histogram_quantile(0.95,
+  sum by (le, endpoint) (
+    rate(http_request_duration_seconds_bucket[5m])
+  )
+)
+
+# 99th percentile response time
+histogram_quantile(0.99,
+  sum by (le) (
+    rate(http_request_duration_seconds_bucket[5m])
+  )
+)
+
+
+# -- Error Rate Percentage ----------------------------------------------------
+
+# Percentage of requests that are errors (5xx)
+100 * (
+  sum(rate(http_requests_total{status_code=~"5.."}[5m]))
+  /
+  sum(rate(http_requests_total[5m]))
+)
+
+
+# -- Infrastructure Metrics ---------------------------------------------------
+
+# CPU utilization per node
+100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+# Memory usage percentage
+100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))
+
+# Disk usage percentage
+100 * (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes))
+
+# Pod restart count in the last hour
+increase(kube_pod_container_status_restarts_total[1h]) > 0

@@ -1,0 +1,38 @@
+Developer merges PR to main
+           |
+           v
+CI Pipeline runs:
+  lint -> test -> build -> scan -> push image -> update image tag in Git
+           |
+           v
+ArgoCD detects change in Git
+           |
+           v
+Argo Rollouts begins canary:
+  5% traffic -> new version
+  [AnalysisTemplate checks error rate + latency]
+           |
+    +------+------+
+    |             |
+  PASS          FAIL
+    |             |
+    v             v
+  25% -> 50%    Automatic
+  -> 75% -> 100%  rollback
+           |
+           v
+Feature flag system:
+  100% deployed, but new feature
+  enabled for 10% of users via flag
+           |
+           v
+Monitor SLOs + error budget
+           |
+    +------+------+
+    |             |
+  HEALTHY       DEGRADED
+    |             |
+    v             v
+  Feature flag   Kill switch:
+  to 100% users  disable feature
+                 flag immediately

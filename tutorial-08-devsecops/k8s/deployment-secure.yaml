@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  namespace: production
+spec:
+  template:
+    spec:
+      # Pod-level security context
+      securityContext:
+        runAsNonRoot: true
+        runAsUser:    1001
+        runAsGroup:   1001
+        fsGroup:      1001
+        seccompProfile:
+          type: RuntimeDefault      # Apply default seccomp profile
+
+      containers:
+        - name: my-app
+          image: ghcr.io/myorg/my-app:sha-abc123
+
+          # Container-level security context
+          securityContext:
+            allowPrivilegeEscalation: false   # Cannot gain more privileges than parent
+            readOnlyRootFilesystem: true       # Prevent writing to the container filesystem
+            runAsNonRoot: true
+            runAsUser: 1001
+            capabilities:
+              drop: [ALL]                     # Drop all Linux capabilities
+              add: []                         # Add none back
+
+          # Mount a writable volume for temp files (since rootfs is read-only)
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: app-cache
+              mountPath: /app/.cache
+
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: app-cache
+          emptyDir: {}
+
+      # Never use the default service account in production
+      serviceAccountName: my-app-service-account
+      automountServiceAccountToken: false    # Don't mount API credentials unless needed

@@ -1,0 +1,12 @@
+-- Check if the metric exists at all:
+http_requests_total         -- If this returns nothing, the app isn't being scraped
+
+-- Check with a shorter time window:
+rate(http_requests_total[1m])    -- Try 1m instead of 5m if no traffic recently
+
+-- Check label names match:
+{__name__=~"http.*"}            -- List all http metrics to verify exact names
+
+-- Common mistake: wrong label name
+http_requests_total{status_code="200"}   -- Wrong label name
+http_requests_total{status="200"}        -- Correct label name (check your code)

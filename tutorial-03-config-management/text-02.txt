@@ -1,0 +1,5 @@
+Puppet Master (Server)
+      |  HTTPS (port 8140)
+      |
+ Puppet Agent (on each managed node)
+ [Runs every 30 min — fetches catalog, applies it, reports back]

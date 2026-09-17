@@ -1,0 +1,16 @@
++--------------------------------------------------------------+
+|                  THE THREE PILLARS                           |
+|                                                              |
+|  METRICS          LOGS              TRACES                   |
+|  --------         ------            --------                 |
+|  Numeric          Text records      Request journey          |
+|  time-series      of discrete       across services          |
+|  data             events                                     |
+|                                                              |
+|  "What is        "What happened    "Where did this           |
+|  happening?"     at this moment?"  request slow down?"       |
+|                                                              |
+|  Prometheus       Elasticsearch    Jaeger                    |
+|  CloudWatch       Loki             Zipkin                    |
+|  Datadog          Splunk           Tempo                     |
++--------------------------------------------------------------+

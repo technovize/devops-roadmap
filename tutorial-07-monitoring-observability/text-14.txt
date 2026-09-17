@@ -1,0 +1,26 @@
+SLO: 99.9% of requests return non-5xx over 30 days
+
+Error budget: 0.1% = 43.8 minutes/month of allowable downtime
+
+SLO compliance query:
+100 * (
+  sum(increase(http_requests_total{status!~"5.."}[30d]))
+  /
+  sum(increase(http_requests_total[30d]))
+)
+
+Error budget remaining:
+100 * (
+  (1 - 0.999) - (
+    1 - (
+      sum(increase(http_requests_total{status!~"5.."}[30d]))
+      / sum(increase(http_requests_total[30d]))
+    )
+  )
+) / (1 - 0.999)
+
+Decision table:
+> 50%   -> Deploy freely, invest in features
+25-50%  -> Deploy carefully, prioritize reliability
+< 10%   -> Freeze non-critical deployments
+Exhausted -> Full feature freeze until budget recovers

@@ -1,0 +1,50 @@
+---
+- name: Configure web servers
+  hosts: webservers
+  become: true  # Run tasks with sudo
+
+  vars:
+    nginx_port: 80
+    app_user: "www-data"
+
+  tasks:
+
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600  # Only update if cache is older than 1 hour
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present  # Desired state: installed
+
+    - name: Ensure Nginx is started and enabled on boot
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Deploy Nginx configuration
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart Nginx  # Trigger the handler if this task changes anything
+
+    - name: Create application directory
+      file:
+        path: /var/www/myapp
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0755"
+
+  handlers:
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted

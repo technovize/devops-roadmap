@@ -1,0 +1,201 @@
+// Jenkinsfile — Production-ready Declarative Pipeline
+
+pipeline {
+    agent {
+        kubernetes {
+            yaml '''
+                apiVersion: v1
+                kind: Pod
+                spec:
+                  containers:
+                  - name: python
+                    image: python:3.12-slim
+                    command: ["sleep", "infinity"]
+                  - name: docker
+                    image: docker:24-dind
+                    securityContext:
+                      privileged: true
+            '''
+        }
+    }
+
+    environment {
+        REGISTRY       = "ghcr.io/myorg"
+        IMAGE_NAME     = "my-app"
+        COMMIT_SHA     = "${GIT_COMMIT[0..7]}"   // Short SHA
+        SLACK_WEBHOOK  = credentials('slack-webhook-url')
+        KUBECONFIG     = credentials('kubeconfig-production')
+    }
+
+    options {
+        timeout(time: 30, unit: 'MINUTES')       // Fail if pipeline runs > 30 min
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+        disableConcurrentBuilds()                // Don't run parallel builds on same branch
+    }
+
+    stages {
+
+        stage('Install Dependencies') {
+            steps {
+                container('python') {
+                    sh 'pip install -r requirements.txt --quiet'
+                }
+            }
+        }
+
+        stage('Lint & Static Analysis') {
+            parallel {
+                stage('Flake8') {
+                    steps {
+                        container('python') {
+                            sh 'flake8 app/ --max-line-length=120'
+                        }
+                    }
+                }
+                stage('Bandit Security Lint') {
+                    steps {
+                        container('python') {
+                            sh 'bandit -r app/ -ll'   // Only report MEDIUM and above
+                        }
+                    }
+                }
+                stage('MyPy Type Check') {
+                    steps {
+                        container('python') {
+                            sh 'mypy app/'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                container('python') {
+                    sh '''
+                        pytest tests/unit/ \
+                          --cov=app \
+                          --cov-report=xml:coverage.xml \
+                          --cov-report=html:coverage-html \
+                          --cov-fail-under=80 \
+                          --junitxml=test-results.xml
+                    '''
+                }
+            }
+            post {
+                always {
+                    junit 'test-results.xml'                        // Publish test results
+                    publishCoverage adapters: [coberturaAdapter('coverage.xml')]
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                container('docker') {
+                    sh """
+                        docker build \
+                          --build-arg VCS_REF=${COMMIT_SHA} \
+                          --build-arg BUILD_DATE=\$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+                          -t ${REGISTRY}/${IMAGE_NAME}:${COMMIT_SHA} \
+                          -t ${REGISTRY}/${IMAGE_NAME}:latest \
+                          .
+                    """
+                }
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                container('docker') {
+                    sh """
+                        trivy image \
+                          --severity HIGH,CRITICAL \
+                          --exit-code 1 \
+                          --format table \
+                          ${REGISTRY}/${IMAGE_NAME}:${COMMIT_SHA}
+                    """
+                }
+            }
+        }
+
+        stage('Push Image') {
+            when {
+                branch 'main'   // Only push on main branch merges
+            }
+            steps {
+                container('docker') {
+                    withCredentials([usernamePassword(
+                        credentialsId: 'ghcr-credentials',
+                        usernameVariable: 'REGISTRY_USER',
+                        passwordVariable: 'REGISTRY_PASS'
+                    )]) {
+                        sh """
+                            echo \$REGISTRY_PASS | docker login ghcr.io -u \$REGISTRY_USER --password-stdin
+                            docker push ${REGISTRY}/${IMAGE_NAME}:${COMMIT_SHA}
+                            docker push ${REGISTRY}/${IMAGE_NAME}:latest
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            when { branch 'main' }
+            steps {
+                sh """
+                    kubectl set image deployment/my-app \
+                      app=${REGISTRY}/${IMAGE_NAME}:${COMMIT_SHA} \
+                      -n staging
+                    kubectl rollout status deployment/my-app -n staging --timeout=300s
+                """
+            }
+        }
+
+        stage('Integration Tests') {
+            when { branch 'main' }
+            steps {
+                container('python') {
+                    sh 'pytest tests/integration/ --base-url=https://staging.myapp.com -v'
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            when { branch 'main' }
+            input {
+                message "Deploy to production?"
+                ok "Deploy"
+                submitter "devops-team,tech-lead"
+            }
+            steps {
+                sh """
+                    kubectl set image deployment/my-app \
+                      app=${REGISTRY}/${IMAGE_NAME}:${COMMIT_SHA} \
+                      -n production
+                    kubectl rollout status deployment/my-app -n production --timeout=300s
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            sh """
+                curl -X POST ${SLACK_WEBHOOK} \
+                  -H 'Content-type: application/json' \
+                  --data '{"text":"(yes) Pipeline succeeded: ${IMAGE_NAME} ${COMMIT_SHA} deployed to production"}'
+            """
+        }
+        failure {
+            sh """
+                curl -X POST ${SLACK_WEBHOOK} \
+                  -H 'Content-type: application/json' \
+                  --data '{"text":"(no) Pipeline FAILED: ${IMAGE_NAME} ${COMMIT_SHA} — check Jenkins for details"}'
+            """
+        }
+        always {
+            cleanWs()   // Clean up workspace after every run
+        }
+    }
+}

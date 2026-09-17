@@ -1,0 +1,26 @@
+# tetragon-policy.yaml — Kill any process that tries to read /etc/shadow
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: protect-shadow-file
+spec:
+  kprobes:
+    - call: "security_file_permission"
+      syscall: false
+      args:
+        - index: 0
+          type: "file"
+        - index: 1
+          type: "int"
+      selectors:
+        - matchArgs:
+            - index: 0
+              operator: "Prefix"
+              values:
+                - "/etc/shadow"
+            - index: 1
+              operator: "Equal"
+              values:
+                - "4"   # MAY_READ
+          matchActions:
+            - action: Sigkill   # Immediately kill the offending process

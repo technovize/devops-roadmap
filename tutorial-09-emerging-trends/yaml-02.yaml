@@ -1,0 +1,13 @@
+# Annotate the ArgoCD Application to enable Image Updater
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app-staging
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: >
+      my-app=ghcr.io/myorg/my-app
+    argocd-image-updater.argoproj.io/my-app.update-strategy: digest
+    argocd-image-updater.argoproj.io/my-app.allow-tags: regexp:^sha-
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-branch: main
