@@ -1,12 +1,38 @@
-# DevOps Learning Roadmap — Companion Code
+<div align="center">
 
-Lab code, configuration, manifests, and pipeline definitions for **DevOps Learning Roadmap** by KC Ramo (Technovize Publishing, 2026).
+<img src="cover.png" alt="DevOps Learning Roadmap — From Cloud Fundamentals to CI/CD, Kubernetes, IaC, DevSecOps, and Certification" width="320">
 
-Every code sample in the book lives here, organised one directory per tutorial. 389 files across 11 tutorials.
+# DevOps Roadmap — companion code for *DevOps Learning Roadmap*
 
-- Book: <https://technovize.com>
-- Paperback: 546 pages, 8.25 × 11 in, ISBN 978-90-8378-211-9 — Technovize Publishing
-- Author: KC Ramo · Technovize Publishing
+**From Cloud Fundamentals to CI/CD, Kubernetes, IaC, DevSecOps, and Certification**
+by **KC Ramo** · Technovize Publishing
+
+[**Ebook (PDF + EPUB) →**](https://djangozen.com/ebooks/book/devops-learning-roadmap/)
+
+546 pages · 8.25 × 11 inch · ISBN 978-90-8378-211-9
+
+</div>
+
+---
+
+## About the book
+
+DevOps is not a tool you can learn in a weekend. It spans the cloud, scripting,
+configuration management, containers, delivery pipelines, infrastructure as code,
+monitoring and security — and most engineers end up deep in one area with gaps
+everywhere else.
+
+*DevOps Learning Roadmap* is a structured path through all of it. Eleven hands-on
+tutorials take you from a first cloud account to a portfolio and a certification
+plan, each ending in lab exercises on free tiers, a ten-question quiz, a
+troubleshooting guide and flashcards.
+
+This repository holds the code. The reasoning is in the book.
+
+## Companion code
+
+Every code sample in the book lives here, organised one directory per tutorial.
+389 files across 11 tutorials.
 
 ## Repository layout
 
