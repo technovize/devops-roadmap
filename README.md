@@ -5,7 +5,7 @@ Lab code, configuration, manifests, and pipeline definitions for **DevOps Learni
 Every code sample in the book lives here, organised one directory per tutorial. 389 files across 11 tutorials.
 
 - Book: <https://technovize.com>
-- Kindle & paperback: Amazon
+- Paperback: 546 pages, 8.25 × 11 in, ISBN 978-90-8378-211-9 — Technovize Publishing
 - Author: KC Ramo · Technovize Publishing
 
 ## Repository layout
