@@ -7,7 +7,7 @@
 **From Cloud Fundamentals to CI/CD, Kubernetes, IaC, DevSecOps, and Certification**
 by **KC Ramo** · Technovize Publishing
 
-[**Ebook (PDF + EPUB) →**](https://djangozen.com/ebooks/book/devops-learning-roadmap/)
+[**Ebook (PDF + EPUB) →**](https://djangozen.com/ebooks/book/devops-learning-roadmap/) · [**Paperback →**](https://www.amazon.com/dp/9083782115)
 
 546 pages · 8.25 × 11 inch · ISBN 978-90-8378-211-9
 
